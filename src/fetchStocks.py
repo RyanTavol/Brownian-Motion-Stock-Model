@@ -61,7 +61,16 @@ class StockData:
     # Assumes a valid date accessed
     def getAllForDate(self, date):
         return self.stock_data_df.loc[date]
+    
+    def getMostCurrentPrice(self):
+        # Get the most recent date (last row of the DataFrame)
+        most_recent_date = self.stock_data_df.index[-1]
 
-apple = StockData("AAPL", '2023-01-01', '2023-12-31')
-print(apple.stock_data_df)
-print(apple.getAllForDate("2023-01-05"))
+        # Get the closing price for the most recent date
+        return self.stock_data_df.loc[most_recent_date, 'Close']
+
+# apple = StockData("AAPL", '2023-01-01', '2023-12-31')
+# print(apple.stock_data_df)
+# print(apple.getAllForDate("2023-01-05"))
+# print(len(apple.getClosingPrices()))
+# print(apple.getMostCurrentPrice())
