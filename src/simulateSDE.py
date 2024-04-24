@@ -16,7 +16,7 @@ num_paths:          an integer the number of paths simulated
 
 return:             a matrix describing the multiple paths 
 """
-def simulate_stock_prices(stock_history, mu_function, sigma_function, T, dt, num_paths):
+def simulate_stock_prices(stock_history, mu_function, sigma_function, T = 1, dt = 1/252, num_paths = 10):
     # Initialize arrays to store stock prices
     prices = np.zeros((num_paths, int(T/dt)+1))
     
