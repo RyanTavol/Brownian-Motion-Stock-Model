@@ -10,18 +10,18 @@ class StockData:
     def __init__(self, ticker, start_date = None, end_date = None):
         # Do some basic logic about checking if ticker, start, and end are valid
         # But for now let's assume they are all fine
-        self.stock_data_df = pd.DataFrame(self.fetchDailyStockData(ticker, start_date, end_date))
+        self.stock_data_df = pd.DataFrame(self.__fetchDailyStockData(ticker, start_date, end_date))
         self.start_date = start_date
 
         self.start_date = start_date
         self.end_date = end_date
-
+        
         # self.start_date = datetime.strptime(self.stock_data_df.index[0].strftime('%Y-%m-%d'), '%Y-%m-%d')
         # self.end_date = datetime.strptime(self.stock_data_df.index[-1].strftime('%Y-%m-%d'), '%Y-%m-%d')
 
         # self.end_date += timedelta(days=1)
 
-        self.market_data_df = pd.DataFrame(self.fetchDailyStockData("^GSPC", self.start_date, self.end_date))
+        self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date))
         self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
 
         # risk free rate is calculated typically using the bond price
@@ -30,7 +30,7 @@ class StockData:
         self.market_return = 0.8
         
 
-    def fetchDailyStockData(self, ticker, start_date = None, end_date = None):
+    def __fetchDailyStockData(self, ticker, start_date = None, end_date = None):
         if(start_date != None and end_date != None):
             return yf.download(ticker, start_date, end_date)
         if(start_date != None and end_date == None):
@@ -55,3 +55,13 @@ class StockData:
 
         return beta
     
+    def getClosingPrices(self):
+        return self.stock_data_df['Close'].values
+    
+    # Assumes a valid date accessed
+    def getAllForDate(self, date):
+        return self.stock_data_df.loc[date]
+
+apple = StockData("AAPL", '2023-01-01', '2023-12-31')
+print(apple.stock_data_df)
+print(apple.getAllForDate("2023-01-05"))
