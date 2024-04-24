@@ -60,6 +60,32 @@ class StockData:
     def getMostCurrentPrice(self):
         # Get the most recent date (last row of the DataFrame)
         most_recent_date = self.stock_data_df.index[-1]
-
+    
         # Get the closing price for the most recent date
         return self.stock_data_df.loc[most_recent_date, 'Close']
+    
+    def getStockDataRange(self, start_date, end_date):
+        # Allows for string or date input of dates
+        start_date = datetime.strptime('2023-01-01', '%Y-%m-%d')
+        end_date = datetime.strptime('2023-12-31', '%Y-%m-%d')
+        # Check if start_date and end_date are valid datetime objects
+        if not isinstance(start_date, datetime) or not isinstance(end_date, datetime):
+            raise ValueError("start_date and end_date must be valid datetime objects")
+
+        # Check if start_date is before end_date
+        if start_date > end_date:
+            raise ValueError("start_date must be before end_date")
+
+        # Check if start_date and end_date are within the range of available data
+        if start_date < self.start_date:
+            raise ValueError("start_date is before the available data range")
+        if end_date > self.end_date:
+            raise ValueError("end_date is after the available data range")
+
+        return self.stock_data_df[start_date:end_date]
+    
+
+apple = StockData("AAPL")
+
+print(apple.getStockDataRange('2023-01-01', '2023-12-31'))
+
