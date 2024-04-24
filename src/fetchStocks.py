@@ -12,7 +12,7 @@ class StockData:
         # Do some basic logic about checking if ticker, start, and end are valid
         # But for now let's assume they are all fine
         self.stock_data_df = pd.DataFrame(self.__fetchDailyStockData(ticker, start_date, end_date))
-        
+
         self.start_date = datetime.strptime(self.stock_data_df.index[0].strftime('%Y-%m-%d'), '%Y-%m-%d')
         self.end_date = datetime.strptime(self.stock_data_df.index[-1].strftime('%Y-%m-%d'), '%Y-%m-%d')
         self.end_date += BDay(1)
@@ -25,8 +25,21 @@ class StockData:
         # market return is on average the return of the SP500 (I will only concern myself with stocks in this market)
         self.market_return = 0.8
         
+    @classmethod
+    def from_dataframe(cls, df):
+        # Create a new instance of StockData class with data from the provided DataFrame
+        instance = cls.__new__(cls)
+        instance.stock_data_df = df
+        instance.start_date = df.index[0]
+        instance.end_date = df.index[-1]
+        # Assuming that the market data for beta calculation is not available in this case
+        instance.beta = None
+        instance.risk_free_rate = None
+        instance.market_return = None
+        return instance
 
     def __fetchDailyStockData(self, ticker, start_date = None, end_date = None):
+        print(f"Fetching Stock Data For {ticker}")
         if start_date and end_date:
             return yf.download(ticker, start=start_date, end=end_date)
         elif start_date:
@@ -65,6 +78,11 @@ class StockData:
         return self.stock_data_df.loc[most_recent_date, 'Close']
     
     def getStockDataRange(self, start_date, end_date):
+        # Convert None to the minimum and maximum dates available if not provided
+        if start_date is None:
+            start_date = self.start_date
+        if end_date is None:
+            end_date = self.end_date
         # Allows for string or date input of dates
         start_date = datetime.strptime('2023-01-01', '%Y-%m-%d')
         end_date = datetime.strptime('2023-12-31', '%Y-%m-%d')
@@ -85,7 +103,7 @@ class StockData:
         return self.stock_data_df[start_date:end_date]
     
 
-apple = StockData("AAPL")
+# apple = StockData("AAPL")
 
-print(apple.getStockDataRange('2023-01-01', '2023-12-31'))
+# print(apple.getStockDataRange('2023-01-01', '2023-12-31'))
 
