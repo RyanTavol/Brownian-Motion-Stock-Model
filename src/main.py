@@ -7,21 +7,10 @@ import sys
 sys.path.append('./parameterMethods')
 from fixedParameters import muFixedParam, sigmaFixedParam
 
+print("Running Main:")
 
 apple = StockData("AAPL")
-data = StockData.from_dataframe(apple.getStockDataRange(None, "2022-01-01"))
-trueStockPrice = StockData.from_dataframe(apple.getStockDataRange(data.end_date, "2023-01-01"))
-simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam)
-print(simulation)
-print(simulation.shape)
-print(len(trueStockPrice.getClosingPrices()))
-dual_multi_SDE_plot(simulation, trueStockPrice)
-
-# print(apple.stock_data_df)
-# print(apple.getAllForDate("2023-01-05"))
-
-# simulation = simulate_stock_prices(apple, muFixedParam, sigmaFixedParam)
-# multi_SDE_plot(simulation)
-# print(simulation)
-
-print("Test")
+data = StockData("AAPL", apple.getStockDataRange(None, "2018-01-01"))
+trueStockPrice = StockData("AAPL",apple.getStockDataRange(data.end_date, "2019-01-01"))
+simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+dual_multi_SDE_plot(simulation, trueStockPrice.getClosingPrices())

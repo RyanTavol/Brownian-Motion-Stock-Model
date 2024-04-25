@@ -8,16 +8,19 @@ class StockData:
     # For now I am going to require that a start date and end date are required fields
     # If time permits I want to allow for adaptable parameters
 
-    def __init__(self, ticker, start_date = None, end_date = None):
+    def __init__(self, ticker, stock_data_df = None, start_date = None, end_date = None):
         # Do some basic logic about checking if ticker, start, and end are valid
         # But for now let's assume they are all fine
-        self.stock_data_df = pd.DataFrame(self.__fetchDailyStockData(ticker, start_date, end_date))
+        if(stock_data_df is None):
+            self.stock_data_df = pd.DataFrame(self.__fetchDailyStockData(ticker, start_date, end_date))
+        else:
+            self.stock_data_df = stock_data_df
 
         self.start_date = datetime.strptime(self.stock_data_df.index[0].strftime('%Y-%m-%d'), '%Y-%m-%d')
         self.end_date = datetime.strptime(self.stock_data_df.index[-1].strftime('%Y-%m-%d'), '%Y-%m-%d')
-        self.end_date += BDay(1)
+        # self.end_date += BDay(1)
 
-        self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date))
+        self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date + BDay(1)))
         self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
 
         # risk free rate is calculated typically using the bond price
@@ -79,27 +82,28 @@ class StockData:
     
     def getStockDataRange(self, start_date, end_date):
         # Convert None to the minimum and maximum dates available if not provided
-        if start_date is None:
-            start_date = self.start_date
-        if end_date is None:
-            end_date = self.end_date
-        # Allows for string or date input of dates
-        start_date = datetime.strptime('2023-01-01', '%Y-%m-%d')
-        end_date = datetime.strptime('2023-12-31', '%Y-%m-%d')
-        # Check if start_date and end_date are valid datetime objects
-        if not isinstance(start_date, datetime) or not isinstance(end_date, datetime):
-            raise ValueError("start_date and end_date must be valid datetime objects")
+        # if start_date is None:
+        #     start_date = self.start_date
+        # if end_date is None:
+        #     end_date = self.end_date
+        # # Allows for string or date input of dates
+        # start_date = datetime.strptime('2023-01-01', '%Y-%m-%d')
+        # end_date = datetime.strptime('2023-12-31', '%Y-%m-%d')
+        # # Check if start_date and end_date are valid datetime objects
+        # if not isinstance(start_date, datetime) or not isinstance(end_date, datetime):
+        #     raise ValueError("start_date and end_date must be valid datetime objects")
 
         # Check if start_date is before end_date
-        if start_date > end_date:
-            raise ValueError("start_date must be before end_date")
+        # if start_date > end_date:
+        #     raise ValueError("start_date must be before end_date")
 
-        # Check if start_date and end_date are within the range of available data
-        if start_date < self.start_date:
-            raise ValueError("start_date is before the available data range")
-        if end_date > self.end_date:
-            raise ValueError("end_date is after the available data range")
+        # # Check if start_date and end_date are within the range of available data
+        # if start_date < self.start_date:
+        #     raise ValueError("start_date is before the available data range")
+        # if end_date > self.end_date:
+        #     raise ValueError("end_date is after the available data range")
 
+        
         return self.stock_data_df[start_date:end_date]
     
 
