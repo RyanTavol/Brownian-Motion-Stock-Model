@@ -6,11 +6,15 @@ from plot import multi_SDE_plot, dual_multi_SDE_plot
 import sys
 sys.path.append('./parameterMethods')
 from fixedParameters import muFixedParam, sigmaFixedParam
+from capm import muCAPM, sigmaCAPM
 
 print("Running Main:")
 
-apple = StockData("AAPL")
-data = StockData("AAPL", apple.getStockDataRange(None, "2018-01-01"))
-trueStockPrice = StockData("AAPL",apple.getStockDataRange(data.end_date, "2019-01-01"))
-simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+stockTicker = "IBM"
+
+apple = StockData(stockTicker)
+data = StockData(stockTicker, apple.getStockDataRange(None, "2023-01-01"))
+trueStockPrice = StockData(stockTicker,apple.getStockDataRange(data.end_date, "2024-01-01"))
+# simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
 dual_multi_SDE_plot(simulation, trueStockPrice.getClosingPrices())

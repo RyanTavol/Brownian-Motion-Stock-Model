@@ -21,12 +21,12 @@ class StockData:
         # self.end_date += BDay(1)
 
         self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date + BDay(1)))
-        self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
+        # self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
 
         # risk free rate is calculated typically using the bond price
-        self.risk_free_rate = 0.2
+        self.risk_free_rate = 0.05
         # market return is on average the return of the SP500 (I will only concern myself with stocks in this market)
-        self.market_return = 0.8
+        self.market_return = 0.08
         
     @classmethod
     def from_dataframe(cls, df):
@@ -52,20 +52,37 @@ class StockData:
         else:
             return yf.download(ticker)
     
-    def __calcBeta(self, stock_data, market_data):
+    # def __calcBeta(self, stock_data, market_data):
+    #     # Calculate daily returns for stock and market
+    #     stock_returns = stock_data['Adj Close'].pct_change()
+    #     market_returns = market_data['Adj Close'].pct_change()
+
+    #     # Remove NaN values
+    #     stock_returns = stock_returns.dropna()
+    #     market_returns = market_returns.dropna()
+
+    #     # Perform linear regression to calculate beta
+    #     beta = np.cov(stock_returns, market_returns)[0, 1] / np.var(market_returns)
+
+    #     return beta
+
+    def calcBeta(self, start_date=None, end_date=None):
+        # Filter stock data for the specified range of dates
+        stock_data_filtered = self.getStockDataRange(start_date, end_date)
+        
+        # Filter market returns for the same date range as stock data
+        market_data_filtered = self.market_data_df[start_date:end_date]
+        
         # Calculate daily returns for stock and market
-        stock_returns = stock_data['Adj Close'].pct_change()
-        market_returns = market_data['Adj Close'].pct_change()
-
-        # Remove NaN values
-        stock_returns = stock_returns.dropna()
-        market_returns = market_returns.dropna()
-
+        stock_returns = stock_data_filtered['Adj Close'].pct_change().dropna()
+        market_returns = market_data_filtered['Adj Close'].pct_change().dropna()
+        
         # Perform linear regression to calculate beta
         beta = np.cov(stock_returns, market_returns)[0, 1] / np.var(market_returns)
-
+        
         return beta
-    
+
+
     def getClosingPrices(self):
         return self.stock_data_df['Close'].values
     
