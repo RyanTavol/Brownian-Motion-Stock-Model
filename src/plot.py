@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 # Plotting with multiple SDE estimations only
-def multi_SDE_plot(simulated_prices):
+def multi_SDE_plot(simulated_prices, ticker):
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
@@ -12,7 +12,7 @@ def multi_SDE_plot(simulated_prices):
     # plt.plot(simulated_prices[0], color='blue', alpha=0.5, label='Simulated Prices')
     # Plot true stock prices
     
-    plt.title('Simulated Stock Prices')
+    plt.title(f'Simulated Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
@@ -20,7 +20,7 @@ def multi_SDE_plot(simulated_prices):
     plt.show()
 
 # Plotting with multiple SDE estimations compared to true stock value
-def dual_multi_SDE_plot(simulated_prices, true_prices):
+def dual_multi_SDE_plot(simulated_prices, true_prices, ticker):
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
@@ -30,7 +30,7 @@ def dual_multi_SDE_plot(simulated_prices, true_prices):
     # Plot true stock prices
     plt.plot(true_prices, color='red', label='True Prices')
     
-    plt.title('Simulated vs. True S&P 500 Stock Prices')
+    plt.title(f'Simulated vs. True Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()

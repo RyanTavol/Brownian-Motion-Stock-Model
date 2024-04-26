@@ -18,15 +18,14 @@ class StockData:
 
         self.start_date = datetime.strptime(self.stock_data_df.index[0].strftime('%Y-%m-%d'), '%Y-%m-%d')
         self.end_date = datetime.strptime(self.stock_data_df.index[-1].strftime('%Y-%m-%d'), '%Y-%m-%d')
-        # self.end_date += BDay(1)
 
         self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date + BDay(1)))
-        # self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
+        self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
 
         # risk free rate is calculated typically using the bond price
         self.risk_free_rate = 0.05
         # market return is on average the return of the SP500 (I will only concern myself with stocks in this market)
-        self.market_return = 0.08
+        self.market_return = 0.10
         
     @classmethod
     def from_dataframe(cls, df):
@@ -52,21 +51,21 @@ class StockData:
         else:
             return yf.download(ticker)
     
-    # def __calcBeta(self, stock_data, market_data):
-    #     # Calculate daily returns for stock and market
-    #     stock_returns = stock_data['Adj Close'].pct_change()
-    #     market_returns = market_data['Adj Close'].pct_change()
+    def __calcBeta(self, stock_data, market_data):
+        # Calculate daily returns for stock and market
+        stock_returns = stock_data['Adj Close'].pct_change()
+        market_returns = market_data['Adj Close'].pct_change()
 
-    #     # Remove NaN values
-    #     stock_returns = stock_returns.dropna()
-    #     market_returns = market_returns.dropna()
+        # Remove NaN values
+        stock_returns = stock_returns.dropna()
+        market_returns = market_returns.dropna()
 
-    #     # Perform linear regression to calculate beta
-    #     beta = np.cov(stock_returns, market_returns)[0, 1] / np.var(market_returns)
+        # Perform linear regression to calculate beta
+        beta = np.cov(stock_returns, market_returns)[0, 1] / np.var(market_returns)
 
-    #     return beta
+        return beta
 
-    def calcBeta(self, start_date=None, end_date=None):
+    def calcBetaDateRange(self, start_date=None, end_date=None):
         # Filter stock data for the specified range of dates
         stock_data_filtered = self.getStockDataRange(start_date, end_date)
         
@@ -98,33 +97,5 @@ class StockData:
         return self.stock_data_df.loc[most_recent_date, 'Close']
     
     def getStockDataRange(self, start_date, end_date):
-        # Convert None to the minimum and maximum dates available if not provided
-        # if start_date is None:
-        #     start_date = self.start_date
-        # if end_date is None:
-        #     end_date = self.end_date
-        # # Allows for string or date input of dates
-        # start_date = datetime.strptime('2023-01-01', '%Y-%m-%d')
-        # end_date = datetime.strptime('2023-12-31', '%Y-%m-%d')
-        # # Check if start_date and end_date are valid datetime objects
-        # if not isinstance(start_date, datetime) or not isinstance(end_date, datetime):
-        #     raise ValueError("start_date and end_date must be valid datetime objects")
-
-        # Check if start_date is before end_date
-        # if start_date > end_date:
-        #     raise ValueError("start_date must be before end_date")
-
-        # # Check if start_date and end_date are within the range of available data
-        # if start_date < self.start_date:
-        #     raise ValueError("start_date is before the available data range")
-        # if end_date > self.end_date:
-        #     raise ValueError("end_date is after the available data range")
-
-        
+        # TODO Add error handling
         return self.stock_data_df[start_date:end_date]
-    
-
-# apple = StockData("AAPL")
-
-# print(apple.getStockDataRange('2023-01-01', '2023-12-31'))
-
