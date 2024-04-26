@@ -2,6 +2,7 @@ import numpy as np
 from fetchStocks import StockData
 from simulateSDE import simulate_stock_prices, select_middle_path, compute_median_path, compute_mean_path
 from plot import multi_SDE_plot, dual_multi_SDE_plot, plot_single_estimated_path, plot_comparison_mid
+from analysis import *
 
 import sys
 sys.path.append('./parameterMethods')
@@ -20,6 +21,12 @@ simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStoc
 middle = select_middle_path(simulation)
 median = compute_median_path(simulation)
 mean = compute_mean_path(simulation)
+
+print(correlation_coefficient(trueStockPrice.getClosingPrices(),mean))
+print(mean_absolute_percentage_error(trueStockPrice.getClosingPrices(), mean))
+print(percentage_of_correct_predictions(trueStockPrice.getClosingPrices(), mean))
+print(percentage_of_correct_predictions(trueStockPrice.getClosingPrices(), simulation))
+# print(correlation_coefficient(trueStockPrice.getClosingPrices(), simulation))
 
 
 dual_multi_SDE_plot(simulation, trueStockPrice.getClosingPrices(), stockTicker)
