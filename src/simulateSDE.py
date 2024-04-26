@@ -3,22 +3,21 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import KernelDensity
 from fetchStocks import StockData
 
-# Function to simulate future stock prices using the GBM model
-"""
-Function to simulate future stock prices using the GBM model. 
-Uses the precise solution to the SDE, not an approximated solution
-Has adaptable parameter functionality
-
-stock_history:      a list of stock data as described in fetchStocks
-mu_function:        a function with parameters (...) that returns a valid mu parameter
-sigma_function:     a function with parameters (...) that returns a valid mu parameter
-T:                  an integer describing the time (in years) that you want to simulate
-dt:                 a float describing the time-step (typically 1/250) (1 trading day)
-num_paths:          an integer the number of paths simulated
-
-return:             a matrix describing the multiple paths 
-"""
 def simulate_stock_prices(stock_history: StockData, mu_function, sigma_function, T = 1, dt = 1/250, num_paths = 10):
+    """
+    Simulates future stock prices using the Geometric Brownian Motion (GBM) model.
+
+    Args:
+        stock_history (StockData): Object containing historical stock data.
+        mu_function (function): Function to compute the drift parameter (mu) for the GBM model.
+        sigma_function (function): Function to compute the volatility parameter (sigma) for the GBM model.
+        T (float): Time horizon (in years) for simulation. Default is 1.
+        dt (float): Time step (in years) for simulation. Default is 1/250 (1 trading day).
+        num_paths (int): Number of paths to simulate. Default is 10.
+
+    Returns:
+        numpy.ndarray: Matrix describing the multiple paths.
+    """
     # Initialize arrays to store stock prices
     prices = np.zeros((num_paths, int(T/dt)+1))
     
@@ -38,8 +37,16 @@ def simulate_stock_prices(stock_history: StockData, mu_function, sigma_function,
     
     return prices
 
-# Function to compute cumulative distance to all other paths for each path
 def compute_cumulative_distance(simulated_paths):
+    """
+    Computes the cumulative distance to all other paths for each path.
+
+    Args:
+        simulated_paths (numpy.ndarray): Matrix containing simulated stock prices.
+
+    Returns:
+        numpy.ndarray: Array containing cumulative distances.
+    """
     num_paths = len(simulated_paths)
     cumulative_distances = np.zeros(num_paths)
     
@@ -54,15 +61,31 @@ def compute_cumulative_distance(simulated_paths):
     
     return cumulative_distances
 
-# Function to select the path with the smallest cumulative distance
 def select_middle_path(simulated_paths):
+    """
+    Selects the path with the smallest cumulative distance.
+
+    Args:
+        simulated_paths (numpy.ndarray): Matrix containing simulated stock prices.
+
+    Returns:
+        numpy.ndarray: The middle path.
+    """
     cumulative_distances = compute_cumulative_distance(simulated_paths)
     middle_path_index = np.argmin(cumulative_distances)
     middle_path = simulated_paths[middle_path_index]
     return middle_path
 
-# Function to compute the median path from simulated paths
 def compute_median_path(simulated_paths):
+    """
+    Computes the median path from simulated paths.
+
+    Args:
+        simulated_paths (numpy.ndarray): Matrix containing simulated stock prices.
+
+    Returns:
+        numpy.ndarray: Median path.
+    """
     num_paths, num_steps = simulated_paths.shape
     median_path = np.zeros(num_steps)
     
