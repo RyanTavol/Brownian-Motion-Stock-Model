@@ -3,6 +3,18 @@ from sklearn.neighbors import KernelDensity
 from fetchStocks import StockData
 
 def muKDE(stock: StockData, estimations, T, dt):
+    """
+    Calculate the drift parameter (mu) using Kernel Density Estimation (KDE) method.
+
+    Args:
+        stock (StockData): Object containing historical stock data.
+        estimations: Not used in this function.
+        T (float): Time horizon (in years) for simulation.
+        dt (float): Time step (in years) for simulation.
+
+    Returns:
+        float: Drift parameter (mu) estimate.
+    """
     # Extract daily returns
     daily_returns = stock.stock_data_df['Adj Close'].pct_change().dropna()
 
@@ -16,6 +28,18 @@ def muKDE(stock: StockData, estimations, T, dt):
     return np.mean(mu_samples)
 
 def sigmaKDE(stock: StockData, estimations, T, dt):
+    """
+    Calculate the volatility parameter (sigma) using Kernel Density Estimation (KDE) method.
+
+    Args:
+        stock (StockData): Object containing historical stock data.
+        estimations: Not used in this function.
+        T (float): Time horizon (in years) for simulation.
+        dt (float): Time step (in years) for simulation.
+
+    Returns:
+        float: Volatility parameter (sigma) estimate.
+    """
     # Extract daily returns
     daily_returns = stock.stock_data_df['Adj Close'].pct_change().dropna()
 
