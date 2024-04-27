@@ -15,6 +15,15 @@ from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 
 print("Running Main:")
 
+# Set The Simulation Seed
+seed = None
+if(seed is None):
+    seed = np.random.randint(0,1000)
+
+np.random.seed(seed)
+print("Seed:", seed)
+
+
 PARAMETER_FUNCTIONS =   [\
                             ["Fixed Parameters", (muFixedParam, sigmaFixedParam) ],
                             ["Capital Asset Pricing Model (CAPM)", (muCAPM, sigmaCAPM)],
@@ -52,17 +61,20 @@ def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, mu_
 
 
 def simulateAndCompareAllFunc(ticker, data_start_date, data_end_date, sim_end_date):
+    # Each Time You Compare Remember To Reset The Seed
     pass
 
 def simulateFuture():
     pass
 
-stockTicker = "IBM"
-dataStart = None
-dataEnd = "2023-01-01"
-simEnd = "2024-01-01"
-muFunc = muBootstrap
-sigmaFunc = sigma1Bootstrap
+if __name__=='__main__':
+        
+    stockTicker = "IBM"
+    dataStart = None
+    dataEnd = "2023-01-01"
+    simEnd = "2024-01-01"
+    muFunc = muBootstrap
+    sigmaFunc = sigma1Bootstrap
 
-simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
+    simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
 
