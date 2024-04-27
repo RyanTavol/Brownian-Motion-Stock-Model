@@ -33,10 +33,13 @@ PARAMETER_FUNCTIONS =   [\
                         ]
 
 
-def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name):
+def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name, stock_data = None):
 
     # Set Up Stock And "Previous History"
-    stock = StockData(ticker)
+    if(stock_data is None):
+        stock = StockData(ticker)
+    else:
+        stock = stock_data
     data = StockData(ticker, stock.getStockDataRange(data_start_date, data_end_date), stock.market_data_df)
     trueStockData = StockData(ticker,stock.getStockDataRange(data.end_date, sim_end_date), stock.market_data_df)
 
@@ -71,12 +74,12 @@ def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
     # Each Time You Compare Remember To Reset The Seed
     # Going To Be A List Of (Methodname: Dictionary)
     simulation_results = []
-
+    stock = StockData(ticker)
     for method_name, param_funcs in PARAMETER_FUNCTIONS:
         np.random.seed(SIMULATION_SEED)
         mu_function, sigma_function = param_funcs
-        simulation_data = simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name)
-        print("Method:", method_name)
+        simulation_data = simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name, stock)
+        print(f"Simulation Complete: [{method_name}]")
         simulation_results.append(simulation_data)
         
 
