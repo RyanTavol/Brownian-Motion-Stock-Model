@@ -46,6 +46,7 @@ class StockData:
         """
         # Do some basic logic about checking if ticker, start, and end are valid
         # But for now let's assume they are all fine
+        self.ticker = ticker
         if(stock_data_df is None):
             self.stock_data_df = pd.DataFrame(self.__fetchDailyStockData(ticker, start_date, end_date))
         else:

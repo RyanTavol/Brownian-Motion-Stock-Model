@@ -23,7 +23,7 @@ if(seed is None):
 np.random.seed(seed)
 print("Seed:", seed)
 
-
+# Consider changing this to a dictionary instead
 PARAMETER_FUNCTIONS =   [\
                             ["Fixed Parameters", (muFixedParam, sigmaFixedParam) ],
                             ["Capital Asset Pricing Model (CAPM)", (muCAPM, sigmaCAPM)],
@@ -33,7 +33,7 @@ PARAMETER_FUNCTIONS =   [\
                         ]
 
 
-def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function):
+def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name):
 
     # Set Up Stock And "Previous History"
     stock = StockData(ticker)
@@ -49,7 +49,30 @@ def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, mu_
     median = compute_median_path(simulation)
     mean = compute_mean_path(simulation)
 
+    simulation_data =   {
+                            'method_name': method_name,
+                            'true_stock_data': trueStockData,
+                            'true_stock_prices': trueStockPrices,
+                            'simulation': simulation,
+                            'middle_path': middle,
+                            'median_path': median,
+                            'mean_path': mean,
+                        }
+    
+    return simulation_data
+
+
+def compareSingle(simulation_data):
+    print(simulation_data['method_name'])
     # Analyze Comparison Metrics
+    # First need to get the fields from the dictionary
+    trueStockPrices = simulation_data['true_stock_prices']
+    simulation = simulation_data['simulation']
+    mean = simulation_data['mean_path']
+    median = simulation_data['median_path']
+    middle = simulation_data['middle_path']
+    ticker = simulation_data['true_stock_data'].ticker
+
     print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrices, simulation))
     print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrices, mean))
     print("Median Analysis:\t", analyzeAllSingle(trueStockPrices, median))
@@ -60,9 +83,23 @@ def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, mu_
     plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
 
 
-def simulateAndCompareAllFunc(ticker, data_start_date, data_end_date, sim_end_date):
+def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
     # Each Time You Compare Remember To Reset The Seed
-    pass
+    # Going To Be A List Of (Methodname: Dictionary)
+    simulation_results = []
+
+    for method_name, param_funcs in PARAMETER_FUNCTIONS:
+        mu_function, sigma_function = param_funcs
+        print("Method:", method_name)
+        simulation_data = simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name)
+        simulation_results.append(simulation_data)
+
+    return simulation_results
+
+def compareMultiple(simulation_data_list):
+    for simulation_data in simulation_data_list:
+        compareSingle(simulation_data)
+
 
 def simulateFuture():
     pass
@@ -75,6 +112,14 @@ if __name__=='__main__':
     simEnd = "2024-01-01"
     muFunc = muBootstrap
     sigmaFunc = sigma1Bootstrap
+    methodName = "Bootstrap (Common Volatility)"
 
-    simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
+    # simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
 
+    # simulateAndCompareAllFunc(stockTicker, dataStart, dataEnd, simEnd )
+
+    # simulation_data = simulateSingleMethod(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc, methodName)
+    # compareSingle(simulation_data)
+
+    simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
+    compareMultiple(simulation_data_all)
