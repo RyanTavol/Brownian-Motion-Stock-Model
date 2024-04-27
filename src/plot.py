@@ -110,7 +110,7 @@ def plot_comparison_mid(simulation_data):
     plt.grid(True)
     plt.show()
 
-def combined_plot(simulation_data):
+def combined_plot_comparison(simulation_data):
     """
     Creates a combined plot showing multiple simulated stock price paths compared to true stock values 
     and the comparison of true, median, middle, and mean stock prices. This function creates two subplots.
@@ -127,7 +127,6 @@ def combined_plot(simulation_data):
             - 'middle_path' (numpy.ndarray): Middle stock prices.
             - 'mean_path' (numpy.ndarray): Mean stock prices.
             - 'ticker' (str): Ticker symbol of the stock.
-            - 'method_name' (str): Name of the method used for simulation.
 
     Returns:
         None
@@ -140,30 +139,35 @@ def combined_plot(simulation_data):
     ticker = simulation_data['true_stock_data'].ticker
     method_name = simulation_data['method_name']
 
+    # Get the date range for the simulation
+    dates = simulation_data['true_stock_data'].market_data_df.index
+
     plt.figure(figsize=(16, 6))
 
     # Plot simulated stock prices
     plt.subplot(1, 2, 1)
     for i in range(simulated_prices.shape[0]):
-        plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
-    plt.plot(true_prices, color='red', label='True Prices')
+        plt.plot(dates, simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
+    plt.plot(dates, true_prices, color='red', label='True Prices')
     plt.title(f'{method_name} -\nSimulated vs. True Stock Prices {ticker}')
-    plt.xlabel('Time Steps')
+    plt.xlabel('Date')
     plt.ylabel('Stock Price')
     plt.legend()
     plt.grid(True)
+    plt.xticks(rotation=45)
 
     # Plot comparison of true, median, middle, and mean stock prices
     plt.subplot(1, 2, 2)
-    plt.plot(true_prices, color='red', label='True Prices')
-    plt.plot(median_prices, color='blue', label='Median Prices')
-    plt.plot(middle_prices, color='green', label='Middle Prices')
-    plt.plot(mean_prices, color='orange', label='Mean Prices')
+    plt.plot(dates, true_prices, color='red', label='True Prices')
+    plt.plot(dates, median_prices, color='blue', label='Median Prices')
+    plt.plot(dates, middle_prices, color='green', label='Middle Prices')
+    plt.plot(dates, mean_prices, color='orange', label='Mean Prices')
     plt.title(f'{method_name} -\nSingle Path Estimation vs. True Stock Prices {ticker}')
-    plt.xlabel('Time Steps')
+    plt.xlabel('Date')
     plt.ylabel('Stock Price')
     plt.legend()
     plt.grid(True)
+    plt.xticks(rotation=45)
 
     plt.tight_layout()
     plt.show()

@@ -32,9 +32,23 @@ PARAMETER_FUNCTIONS =   [\
                             # Add other parameter methods here
                         ]
 
-
 def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name, stock_data = None):
+    """
+    Simulate a single method for stock price prediction.
 
+    Args:
+        ticker (str): Ticker symbol of the stock.
+        data_start_date (str): Start date of historical data.
+        data_end_date (str): End date of historical data.
+        sim_end_date (str): End date of the simulation.
+        mu_function (function): Function to calculate the mean parameter.
+        sigma_function (function): Function to calculate the standard deviation parameter.
+        method_name (str): Name of the simulation method.
+        stock_data (StockData, optional): Object containing historical stock data. Defaults to None.
+
+    Returns:
+        dict: Dictionary containing simulation data.
+    """
     # Set Up Stock And "Previous History"
     if(stock_data is None):
         stock = StockData(ticker)
@@ -64,13 +78,33 @@ def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, m
     
     return simulation_data
 
-
 def compareSingle(simulation_data):
+    """
+    Compare a single simulation.
+
+    Args:
+        simulation_data (dict): Dictionary containing simulation data.
+
+    Returns:
+        None
+    """
     print("\n"+simulation_data['method_name']+"\n")
     print(analyzeAll(simulation_data))
-    combined_plot(simulation_data)
+    combined_plot_comparison(simulation_data)
 
 def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
+    """
+    Simulate all methods for stock price prediction.
+
+    Args:
+        ticker (str): Ticker symbol of the stock.
+        data_start_date (str): Start date of historical data.
+        data_end_date (str): End date of historical data.
+        sim_end_date (str): End date of the simulation.
+
+    Returns:
+        list: List of dictionaries containing simulation data for each method.
+    """
     # Each Time You Compare Remember To Reset The Seed
     # Going To Be A List Of (Methodname: Dictionary)
     simulation_results = []
@@ -82,15 +116,28 @@ def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
         print(f"Simulation Complete: [{method_name}]")
         simulation_results.append(simulation_data)
         
-
     return simulation_results
 
 def compareMultiple(simulation_data_list):
+    """
+    Compare multiple simulations.
+
+    Args:
+        simulation_data_list (list): List of dictionaries containing simulation data for each method.
+
+    Returns:
+        None
+    """
     for simulation_data in simulation_data_list:
         compareSingle(simulation_data)
 
-
 def simulateFuture():
+    """
+    Simulate future stock prices.
+
+    Returns:
+        None
+    """
     pass
 
 if __name__=='__main__':
