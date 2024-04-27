@@ -8,18 +8,16 @@ import sys
 sys.path.append('./parameterMethods')
 from fixedParameters import muFixedParam, sigmaFixedParam
 from capm import muCAPM, sigmaCAPM
-from mle import mu_MLE, sigma_MLE
 
 print("Running Main:")
 
 stockTicker = "IBM"
 
 stock = StockData(stockTicker)
-data = StockData(stockTicker, stock.getStockDataRange(None, "2023-01-01"))
-trueStockPrice = StockData(stockTicker,stock.getStockDataRange(data.end_date, "2024-01-01"))
+data = StockData(stockTicker, stock.getStockDataRange(None, "2023-01-01"), stock.market_data_df)
+trueStockPrice = StockData(stockTicker,stock.getStockDataRange(data.end_date, "2024-01-01"), stock.market_data_df)
 # simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-# simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-simulation = simulate_stock_prices(data, mu_MLE, sigma_MLE, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
 middle = select_middle_path(simulation)
 median = compute_median_path(simulation)
 mean = compute_mean_path(simulation)

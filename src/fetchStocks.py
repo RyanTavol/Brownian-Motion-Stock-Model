@@ -30,13 +30,14 @@ class StockData:
         getStockDataRange: Returns stock data for a specified date range.
     """
 
-    def __init__(self, ticker, stock_data_df = None, start_date = None, end_date = None):
+    def __init__(self, ticker, stock_data_df = None, market_data_df = None, start_date = None, end_date = None):
         """
         Initializes a StockData object.
 
         Args:
             ticker (str): Ticker symbol of the stock.
             stock_data_df (pandas.DataFrame): DataFrame containing historical stock data.
+            market_data_df (pandas.DataFrame): DataFrame containing historical market data.
             start_date (datetime): Start date of the stock data.
             end_date (datetime): End date of the stock data.
 
@@ -53,7 +54,11 @@ class StockData:
         self.start_date = datetime.strptime(self.stock_data_df.index[0].strftime('%Y-%m-%d'), '%Y-%m-%d')
         self.end_date = datetime.strptime(self.stock_data_df.index[-1].strftime('%Y-%m-%d'), '%Y-%m-%d')
 
-        self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date + BDay(1)))
+        if(market_data_df is None):
+            self.market_data_df = pd.DataFrame(self.__fetchDailyStockData("^GSPC", self.start_date, self.end_date + BDay(1)))
+        else:
+            self.market_data_df = market_data_df[self.start_date:self.end_date]
+        
         self.beta = self.__calcBeta(self.stock_data_df, self.market_data_df)
 
         # risk free rate is calculated typically using the bond price
