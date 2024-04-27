@@ -15,7 +15,16 @@ from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 
 print("Running Main:")
 
-def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, muFunction, sigmaFunction):
+PARAMETER_FUNCTIONS =   [\
+                            ["Fixed Parameters", (muFixedParam, sigmaFixedParam) ],
+                            ["Capital Asset Pricing Model (CAPM)", (muCAPM, sigmaCAPM)],
+                            ["Bootstrap (Common Volatility)", (muBootstrap, sigma1Bootstrap)],
+                            ["Bootstrap (Log Volatility)", (muBootstrap, sigma2Bootstrap)],
+                            # Add other parameter methods here
+                        ]
+
+
+def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function):
 
     # Set Up Stock And "Previous History"
     stock = StockData(ticker)
@@ -24,7 +33,7 @@ def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, muF
 
     trueStockPrices = trueStockData.getClosingPrices()  
     # Simulate Stock Price
-    simulation = simulate_stock_prices(data, muFunction, sigmaFunction, dt = 1/(len(trueStockPrices)-1))
+    simulation = simulate_stock_prices(data, mu_function, sigma_function, dt = 1/(len(trueStockPrices)-1))
 
     # Extrapolate Single Paths
     middle = select_middle_path(simulation)
@@ -40,6 +49,10 @@ def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, muF
     # Plot Results
     dual_multi_SDE_plot(simulation, trueStockPrices, ticker)
     plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
+
+
+def simulateAndCompareAllFunc(ticker, data_start_date, data_end_date, sim_end_date):
+    pass
 
 def simulateFuture():
     pass
