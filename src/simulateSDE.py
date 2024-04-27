@@ -99,6 +99,14 @@ def compute_median_path(simulated_paths):
     
     return median_path
 
-# Function to compute the mean path from simulated prices
 def compute_mean_path(simulated_prices):
+    """
+    Computes the mean path from simulated prices.
+
+    Args:
+        simulated_prices (numpy.ndarray): Matrix containing simulated stock prices.
+
+    Returns:
+        numpy.ndarray: Mean path.
+    """
     return np.mean(simulated_prices, axis=0)

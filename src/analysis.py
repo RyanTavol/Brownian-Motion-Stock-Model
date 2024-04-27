@@ -25,6 +25,27 @@ def correlation_coefficient(true_prices, simulated_prices):
 
     return r
 
+def correlation_coefficient_multi(true_prices, simulated_prices_multi):
+    """
+    Calculate the correlation coefficient (r) between true and simulated prices for multiple paths.
+
+    Args:
+        true_prices (numpy.ndarray): True stock prices.
+        simulated_prices_multi (numpy.ndarray): Simulated stock prices for multiple paths (shape: num_paths x num_steps).
+
+    Returns:
+        r (float): Correlation coefficient between true and simulated prices.
+    """
+    num_paths, num_steps = simulated_prices_multi.shape
+    correlations = np.zeros(num_paths)
+
+    for i in range(num_paths):
+        correlations[i] = np.corrcoef(true_prices, simulated_prices_multi[i])[0, 1]
+
+    r = np.mean(correlations)
+
+    return r
+
 def mean_absolute_percentage_error(true_prices, simulated_prices):
     """
     Calculate the mean absolute percentage error (MAPE) between true and simulated prices.
@@ -39,6 +60,27 @@ def mean_absolute_percentage_error(true_prices, simulated_prices):
     n = len(true_prices)
     absolute_percentage_errors = np.abs((true_prices - simulated_prices) / true_prices)
     mape = np.sum(absolute_percentage_errors) / n
+
+    return mape
+
+def mean_absolute_percentage_error_multi(true_prices, simulated_prices_multi):
+    """
+    Calculate the mean absolute percentage error (MAPE) between true and simulated prices for multiple paths.
+
+    Args:
+        true_prices (numpy.ndarray): True stock prices.
+        simulated_prices_multi (numpy.ndarray): Simulated stock prices for multiple paths (shape: num_paths x num_steps).
+
+    Returns:
+        mape (float): Mean absolute percentage error between true and simulated prices.
+    """
+    num_paths, num_steps = simulated_prices_multi.shape
+    absolute_percentage_errors = np.zeros((num_paths, num_steps))
+
+    for i in range(num_paths):
+        absolute_percentage_errors[i] = np.abs((true_prices - simulated_prices_multi[i]) / true_prices)
+
+    mape = np.mean(absolute_percentage_errors)
 
     return mape
 
@@ -77,8 +119,8 @@ def percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi,
 
     for i in range(num_steps):
         absolute_errors = np.abs(true_prices[i] - simulated_prices_multi[:, i])
-        correct_predictions[i] = np.mean(absolute_errors <= threshold) * 100
+        correct_predictions[i] = np.mean(absolute_errors <= threshold)
 
-    percentage = np.mean(correct_predictions)
+    percentage = np.mean(correct_predictions) * 100
 
     return percentage
