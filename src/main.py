@@ -15,27 +15,41 @@ from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 
 print("Running Main:")
 
+def simulateAndCompare(ticker, data_start_date, data_end_date, sim_end_date, muFunction, sigmaFunction):
+
+    # Set Up Stock And "Previous History"
+    stock = StockData(ticker)
+    data = StockData(ticker, stock.getStockDataRange(data_start_date, data_end_date), stock.market_data_df)
+    trueStockData = StockData(ticker,stock.getStockDataRange(data.end_date, sim_end_date), stock.market_data_df)
+
+    trueStockPrices = trueStockData.getClosingPrices()  
+    # Simulate Stock Price
+    simulation = simulate_stock_prices(data, muFunction, sigmaFunction, dt = 1/(len(trueStockPrices)-1))
+
+    # Extrapolate Single Paths
+    middle = select_middle_path(simulation)
+    median = compute_median_path(simulation)
+    mean = compute_mean_path(simulation)
+
+    # Analyze Comparison Metrics
+    print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrices, simulation))
+    print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrices, mean))
+    print("Median Analysis:\t", analyzeAllSingle(trueStockPrices, median))
+    print("Middle Analysis:\t", analyzeAllSingle(trueStockPrices, middle))
+
+    # Plot Results
+    dual_multi_SDE_plot(simulation, trueStockPrices, ticker)
+    plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
+
+def simulateFuture():
+    pass
+
 stockTicker = "IBM"
+dataStart = None
+dataEnd = "2023-01-01"
+simEnd = "2024-01-01"
+muFunc = muBootstrap
+sigmaFunc = sigma1Bootstrap
 
-stock = StockData(stockTicker)
-data = StockData(stockTicker, stock.getStockDataRange(None, "2023-01-01"), stock.market_data_df)
-trueStockPrice = StockData(stockTicker,stock.getStockDataRange(data.end_date, "2024-01-01"), stock.market_data_df)
-# simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-# simulation = simulate_stock_prices(data, muKDE, sigmaKDE, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-# simulation = simulate_stock_prices(data, muBootstrap, sigma1Bootstrap, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
-middle = select_middle_path(simulation)
-median = compute_median_path(simulation)
-mean = compute_mean_path(simulation)
-
-
-
-print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), mean))
-print("Median Analysis:\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), median))
-print("Middle Analysis:\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), middle))
-print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrice.getClosingPrices(), simulation))
-
-dual_multi_SDE_plot(simulation, trueStockPrice.getClosingPrices(), stockTicker)
-plot_comparison_mid(trueStockPrice.getClosingPrices(), median, middle, mean)
-
+simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
 

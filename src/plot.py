@@ -87,7 +87,7 @@ def plot_single_estimated_path(true_path, estimated_path, ticker):
     plt.show()
 
 # Plotting function to compare true stock price, median stock price, and middle stock price
-def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices):
+def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices, ticker):
     """
     Plots a comparison of true, median, middle, and mean stock prices.
 
@@ -111,7 +111,7 @@ def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices):
     # Plot mean stock prices
     plt.plot(mean_prices, color='orange', label='Mean Prices')
     
-    plt.title('Comparison of True, Median, Middle, and Mean Stock Prices')
+    plt.title(f'Comparison of True, Median, Middle, and Mean Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
