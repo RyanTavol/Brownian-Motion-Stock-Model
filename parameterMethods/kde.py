@@ -2,15 +2,17 @@ import numpy as np
 from sklearn.neighbors import KernelDensity
 from fetchStocks import StockData
 
-def muKDE(stock: StockData, estimations, T, dt):
+def muKDE(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
     """
     Calculate the drift parameter (mu) using Kernel Density Estimation (KDE) method.
 
-    Args:
+     Args:
         stock (StockData): Object containing historical stock data.
         estimations: Not used in this function.
         T (float): Time horizon (in years) for simulation.
         dt (float): Time step (in years) for simulation.
+        pathIndex (int): Index for the current path estimating
+        futureTimeIndex (int): Index for how far along the estimation we are
 
     Returns:
         float: Drift parameter (mu) estimate.
@@ -27,15 +29,17 @@ def muKDE(stock: StockData, estimations, T, dt):
     # Return mean of the samples as the estimate for mu
     return np.mean(mu_samples)
 
-def sigmaKDE(stock: StockData, estimations, T, dt):
+def sigmaKDE(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
     """
     Calculate the volatility parameter (sigma) using Kernel Density Estimation (KDE) method.
 
-    Args:
+     Args:
         stock (StockData): Object containing historical stock data.
         estimations: Not used in this function.
         T (float): Time horizon (in years) for simulation.
         dt (float): Time step (in years) for simulation.
+        pathIndex (int): Index for the current path estimating
+        futureTimeIndex (int): Index for how far along the estimation we are
 
     Returns:
         float: Volatility parameter (sigma) estimate.
