@@ -1,27 +1,24 @@
 import matplotlib.pyplot as plt
-# This file has all the functions responsible for plotting my results
 
-
-# Plotting with multiple SDE estimations only
-def multi_SDE_plot(simulated_prices, ticker):
+def multi_SDE_plot(simulation_data):
     """
     Plots multiple simulated stock price paths.
 
     Args:
-        simulated_prices (numpy.ndarray): Matrix containing simulated stock prices.
-        ticker (str): Ticker symbol of the stock.
+        simulation_data (dict): Dictionary containing simulation data.
 
     Returns:
         None
     """
+    simulated_prices = simulation_data['simulation']
+    ticker = simulation_data['true_stock_data'].ticker
+
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
     for i in range(simulated_prices.shape[0]):
         plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
-    # plt.plot(simulated_prices[0], color='blue', alpha=0.5, label='Simulated Prices')
-    # Plot true stock prices
-    
+
     plt.title(f'Simulated Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
@@ -29,25 +26,26 @@ def multi_SDE_plot(simulated_prices, ticker):
     plt.grid(True)
     plt.show()
 
-# Plotting with multiple SDE estimations compared to true stock value
-def dual_multi_SDE_plot(simulated_prices, true_prices, ticker):
+def dual_multi_SDE_plot(simulation_data):
     """
     Plots multiple simulated stock price paths compared to true stock prices.
 
     Args:
-        simulated_prices (numpy.ndarray): Matrix containing simulated stock prices.
-        true_prices (numpy.ndarray): True stock prices.
-        ticker (str): Ticker symbol of the stock.
+        simulation_data (dict): Dictionary containing simulation data.
 
     Returns:
         None
     """
+    simulated_prices = simulation_data['simulation']
+    true_prices = simulation_data['true_stock_prices']
+    ticker = simulation_data['true_stock_data'].ticker
+
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
     for i in range(simulated_prices.shape[0]):
         plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
-    # plt.plot(simulated_prices[0], color='blue', alpha=0.5, label='Simulated Prices')
+
     # Plot true stock prices
     plt.plot(true_prices, color='red', label='True Prices')
     
@@ -58,19 +56,20 @@ def dual_multi_SDE_plot(simulated_prices, true_prices, ticker):
     plt.grid(True)
     plt.show()
 
-# Plotting single aggregate SDE estimation compared to true stock value
-def plot_single_estimated_path(true_path, estimated_path, ticker):
+def plot_single_estimated_path(simulation_data):
     """
     Plots a single estimated stock price path compared to true stock prices.
 
     Args:
-        true_path (numpy.ndarray): True stock prices.
-        estimated_path (numpy.ndarray): Estimated stock prices.
-        ticker (str): Ticker symbol of the stock.
+        simulation_data (dict): Dictionary containing simulation data.
 
     Returns:
         None
     """
+    true_path = simulation_data['true_stock_prices']
+    estimated_path = simulation_data['mean_path']
+    ticker = simulation_data['true_stock_data'].ticker
+
     plt.figure(figsize=(10, 6))
     
     # Plot true stock prices
@@ -86,20 +85,22 @@ def plot_single_estimated_path(true_path, estimated_path, ticker):
     plt.grid(True)
     plt.show()
 
-# Plotting function to compare true stock price, median stock price, and middle stock price
-def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices, ticker):
+def plot_comparison_mid(simulation_data):
     """
     Plots a comparison of true, median, middle, and mean stock prices.
 
     Args:
-        true_prices (numpy.ndarray): True stock prices.
-        median_prices (numpy.ndarray): Median stock prices.
-        middle_prices (numpy.ndarray): Middle stock prices.
-        mean_prices (numpy.ndarray): Mean stock prices.
+        simulation_data (dict): Dictionary containing simulation data.
 
     Returns:
         None
     """
+    true_prices = simulation_data['true_stock_prices']
+    median_prices = simulation_data['median_path']
+    middle_prices = simulation_data['middle_path']
+    mean_prices = simulation_data['mean_path']
+    ticker = simulation_data['true_stock_data'].ticker
+
     plt.figure(figsize=(10, 6))
     
     # Plot true stock prices
@@ -117,5 +118,3 @@ def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices, 
     plt.legend()
     plt.grid(True)
     plt.show()
-
-# Plotting Other Error Metrics

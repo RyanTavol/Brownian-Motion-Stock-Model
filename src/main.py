@@ -71,7 +71,6 @@ def compareSingle(simulation_data):
     mean = simulation_data['mean_path']
     median = simulation_data['median_path']
     middle = simulation_data['middle_path']
-    ticker = simulation_data['true_stock_data'].ticker
 
     print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrices, simulation))
     print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrices, mean))
@@ -79,9 +78,10 @@ def compareSingle(simulation_data):
     print("Middle Analysis:\t", analyzeAllSingle(trueStockPrices, middle))
 
     # Plot Results
-    dual_multi_SDE_plot(simulation, trueStockPrices, ticker)
-    plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
-
+    # dual_multi_SDE_plot(simulation, trueStockPrices, ticker)
+    # plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
+    dual_multi_SDE_plot(simulation_data)
+    plot_comparison_mid(simulation_data)
 
 def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
     # Each Time You Compare Remember To Reset The Seed
