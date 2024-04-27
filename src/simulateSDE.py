@@ -31,8 +31,8 @@ def simulate_stock_prices(stock_history: StockData, mu_function, sigma_function,
             # Generate random increments (Brownian motion)
             dW = np.random.normal(0, np.sqrt(dt))
             # Update stock price using GBM formula
-            mu = mu_function(stock_history, prices, T, dt)
-            sigma = sigma_function(stock_history, prices, T, dt)
+            mu = mu_function(stock_history, prices, T, dt, i, j)
+            sigma = sigma_function(stock_history, prices, T, dt, i, j)
             prices[i, j] = prices[i, j-1] * np.exp((mu - 0.5 * sigma**2) * dt + sigma * dW)
     
     return prices

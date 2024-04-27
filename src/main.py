@@ -8,6 +8,10 @@ import sys
 sys.path.append('./parameterMethods')
 from fixedParameters import muFixedParam, sigmaFixedParam
 from capm import muCAPM, sigmaCAPM
+# from mle import muMLE, sigmaMLE
+from kde import muKDE, sigmaKDE
+# from bayesian import muBayesian, sigmaBayesian
+from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 
 print("Running Main:")
 
@@ -18,22 +22,20 @@ data = StockData(stockTicker, stock.getStockDataRange(None, "2023-01-01"), stock
 trueStockPrice = StockData(stockTicker,stock.getStockDataRange(data.end_date, "2024-01-01"), stock.market_data_df)
 # simulation = simulate_stock_prices(data, muFixedParam, sigmaFixedParam, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
 simulation = simulate_stock_prices(data, muCAPM, sigmaCAPM, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+# simulation = simulate_stock_prices(data, muKDE, sigmaKDE, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
+# simulation = simulate_stock_prices(data, muBootstrap, sigma1Bootstrap, dt = 1/(len(trueStockPrice.getClosingPrices())-1))
 middle = select_middle_path(simulation)
 median = compute_median_path(simulation)
 mean = compute_mean_path(simulation)
 
-print(correlation_coefficient(trueStockPrice.getClosingPrices(),mean))
-print(correlation_coefficient_multi(trueStockPrice.getClosingPrices(), simulation))
-print(mean_absolute_percentage_error(trueStockPrice.getClosingPrices(), mean))
-print(mean_absolute_percentage_error_multi(trueStockPrice.getClosingPrices(), simulation))
-print(percentage_of_correct_predictions(trueStockPrice.getClosingPrices(), mean))
-print(percentage_of_correct_predictions_multi(trueStockPrice.getClosingPrices(), simulation))
 
-# print(correlation_coefficient(trueStockPrice.getClosingPrices(), simulation))
 
+print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), mean))
+print("Median Analysis:\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), median))
+print("Middle Analysis:\t", analyzeAllSingle(trueStockPrice.getClosingPrices(), middle))
+print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrice.getClosingPrices(), simulation))
 
 dual_multi_SDE_plot(simulation, trueStockPrice.getClosingPrices(), stockTicker)
 plot_comparison_mid(trueStockPrice.getClosingPrices(), median, middle, mean)
-# plot_single_estimated_path(trueStockPrice.getClosingPrices(), estimation, stockTicker)
 
 
