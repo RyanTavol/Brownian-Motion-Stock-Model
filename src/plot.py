@@ -4,6 +4,16 @@ import matplotlib.pyplot as plt
 
 # Plotting with multiple SDE estimations only
 def multi_SDE_plot(simulated_prices, ticker):
+    """
+    Plots multiple simulated stock price paths.
+
+    Args:
+        simulated_prices (numpy.ndarray): Matrix containing simulated stock prices.
+        ticker (str): Ticker symbol of the stock.
+
+    Returns:
+        None
+    """
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
@@ -21,6 +31,17 @@ def multi_SDE_plot(simulated_prices, ticker):
 
 # Plotting with multiple SDE estimations compared to true stock value
 def dual_multi_SDE_plot(simulated_prices, true_prices, ticker):
+    """
+    Plots multiple simulated stock price paths compared to true stock prices.
+
+    Args:
+        simulated_prices (numpy.ndarray): Matrix containing simulated stock prices.
+        true_prices (numpy.ndarray): True stock prices.
+        ticker (str): Ticker symbol of the stock.
+
+    Returns:
+        None
+    """
     plt.figure(figsize=(10, 6))
     
     # Plot simulated stock prices
@@ -39,6 +60,17 @@ def dual_multi_SDE_plot(simulated_prices, true_prices, ticker):
 
 # Plotting single aggregate SDE estimation compared to true stock value
 def plot_single_estimated_path(true_path, estimated_path, ticker):
+    """
+    Plots a single estimated stock price path compared to true stock prices.
+
+    Args:
+        true_path (numpy.ndarray): True stock prices.
+        estimated_path (numpy.ndarray): Estimated stock prices.
+        ticker (str): Ticker symbol of the stock.
+
+    Returns:
+        None
+    """
     plt.figure(figsize=(10, 6))
     
     # Plot true stock prices
@@ -56,6 +88,18 @@ def plot_single_estimated_path(true_path, estimated_path, ticker):
 
 # Plotting function to compare true stock price, median stock price, and middle stock price
 def plot_comparison_mid(true_prices, median_prices, middle_prices, mean_prices):
+    """
+    Plots a comparison of true, median, middle, and mean stock prices.
+
+    Args:
+        true_prices (numpy.ndarray): True stock prices.
+        median_prices (numpy.ndarray): Median stock prices.
+        middle_prices (numpy.ndarray): Middle stock prices.
+        mean_prices (numpy.ndarray): Mean stock prices.
+
+    Returns:
+        None
+    """
     plt.figure(figsize=(10, 6))
     
     # Plot true stock prices
