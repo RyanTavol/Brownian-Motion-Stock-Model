@@ -142,3 +142,16 @@ def analyzeAllMulti(true_prices, simulated_prices_multi):
                ("Percentage Inliers", percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi))
             ]
     return results
+
+# Consider Improving This Function To Display It Nicer Or In A Better Format:
+def analyzeAll(simulation_data):
+    trueStockPrices = simulation_data['true_stock_prices']
+    return {
+        "Multi_Analysis" : analyzeAllMulti(trueStockPrices, simulation_data['simulation']),
+        "Mean_Analysis" : analyzeAllSingle(trueStockPrices, simulation_data['mean_path']),
+        "Median_Analysis" : analyzeAllSingle(trueStockPrices, simulation_data['median_path']),
+        "Middle_Analysis" : analyzeAllSingle(trueStockPrices, simulation_data['middle_path']),
+    }
+
+
+
