@@ -1,7 +1,7 @@
 import numpy as np
 from fetchStocks import StockData
-from simulateSDE import simulate_stock_prices, select_middle_path, compute_median_path, compute_mean_path
-from plot import multi_SDE_plot, dual_multi_SDE_plot, plot_single_estimated_path, plot_comparison_mid
+from simulateSDE import *
+from plot import *
 from analysis import *
 
 import sys
@@ -16,12 +16,12 @@ from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 print("Running Main:")
 
 # Set The Simulation Seed
-seed = None
-if(seed is None):
-    seed = np.random.randint(0,1000)
+SIMULATION_SEED = None
+if(SIMULATION_SEED is None):
+    SIMULATION_SEED = np.random.randint(0,1000)
 
-np.random.seed(seed)
-print("Seed:", seed)
+np.random.seed(SIMULATION_SEED)
+print("Seed:", SIMULATION_SEED)
 
 # Consider changing this to a dictionary instead
 PARAMETER_FUNCTIONS =   [\
@@ -63,25 +63,9 @@ def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, m
 
 
 def compareSingle(simulation_data):
-    print(simulation_data['method_name'])
-    # Analyze Comparison Metrics
-    # First need to get the fields from the dictionary
-    trueStockPrices = simulation_data['true_stock_prices']
-    simulation = simulation_data['simulation']
-    mean = simulation_data['mean_path']
-    median = simulation_data['median_path']
-    middle = simulation_data['middle_path']
-
-    print("Multi Analysis:\t\t", analyzeAllMulti(trueStockPrices, simulation))
-    print("Mean Analysis:\t\t", analyzeAllSingle(trueStockPrices, mean))
-    print("Median Analysis:\t", analyzeAllSingle(trueStockPrices, median))
-    print("Middle Analysis:\t", analyzeAllSingle(trueStockPrices, middle))
-
-    # Plot Results
-    # dual_multi_SDE_plot(simulation, trueStockPrices, ticker)
-    # plot_comparison_mid(trueStockPrices, median, middle, mean, ticker)
-    dual_multi_SDE_plot(simulation_data)
-    plot_comparison_mid(simulation_data)
+    print("\n"+simulation_data['method_name']+"\n")
+    print(analyzeAll(simulation_data))
+    combined_plot(simulation_data)
 
 def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
     # Each Time You Compare Remember To Reset The Seed
@@ -89,10 +73,12 @@ def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
     simulation_results = []
 
     for method_name, param_funcs in PARAMETER_FUNCTIONS:
+        np.random.seed(SIMULATION_SEED)
         mu_function, sigma_function = param_funcs
-        print("Method:", method_name)
         simulation_data = simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name)
+        print("Method:", method_name)
         simulation_results.append(simulation_data)
+        
 
     return simulation_results
 

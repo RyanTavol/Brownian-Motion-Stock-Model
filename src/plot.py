@@ -118,3 +118,53 @@ def plot_comparison_mid(simulation_data):
     plt.legend()
     plt.grid(True)
     plt.show()
+
+def combined_plot(simulation_data):
+    """
+    Creates a combined plot showing multiple simulated stock price paths compared to true stock values 
+    and the comparison of true, median, middle, and mean stock prices.
+
+    Args:
+        simulation_data (dict): Dictionary containing simulation data.
+
+    Returns:
+        None
+    """
+    plt.figure(figsize=(16, 6))
+
+    # Plotting dual_multi_SDE_plot on the left side
+    plt.subplot(1, 2, 1)
+    simulated_prices = simulation_data['simulation']
+    true_prices = simulation_data['true_stock_prices']
+    ticker = simulation_data['true_stock_data'].ticker
+
+    for i in range(simulated_prices.shape[0]):
+        plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
+
+    plt.plot(true_prices, color='red', label='True Prices')
+    plt.title(f'Simulated vs. True Stock Prices {ticker}')
+    plt.xlabel('Time Steps')
+    plt.ylabel('Stock Price')
+    plt.legend()
+    plt.grid(True)
+
+    # Plotting plot_comparison_mid on the right side
+    plt.subplot(1, 2, 2)
+    true_prices = simulation_data['true_stock_prices']
+    median_prices = simulation_data['median_path']
+    middle_prices = simulation_data['middle_path']
+    mean_prices = simulation_data['mean_path']
+
+    plt.plot(true_prices, color='red', label='True Prices')
+    plt.plot(median_prices, color='blue', label='Median Prices')
+    plt.plot(middle_prices, color='green', label='Middle Prices')
+    plt.plot(mean_prices, color='orange', label='Mean Prices')
+
+    plt.title(f'Comparison of True, Median, Middle, and Mean Stock Prices {ticker}')
+    plt.xlabel('Time Steps')
+    plt.ylabel('Stock Price')
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.show()
