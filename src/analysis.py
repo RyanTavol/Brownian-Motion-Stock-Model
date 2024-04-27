@@ -124,3 +124,21 @@ def percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi,
     percentage = np.mean(correct_predictions) * 100
 
     return percentage
+
+def analyzeAllSingle(true_prices, simulated_prices):
+    results = \
+            [ \
+               ("Correlation Coefficient", correlation_coefficient(true_prices, simulated_prices)),
+               ("MAPE", mean_absolute_percentage_error(true_prices, simulated_prices)),
+               ("Percentage Inliers", percentage_of_correct_predictions(true_prices, simulated_prices))
+            ]
+    return results
+
+def analyzeAllMulti(true_prices, simulated_prices_multi): 
+    results = \
+            [ \
+               ("Correlation Coefficient", correlation_coefficient_multi(true_prices, simulated_prices_multi)),
+               ("MAPE", mean_absolute_percentage_error_multi(true_prices, simulated_prices_multi)),
+               ("Percentage Inliers", percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi))
+            ]
+    return results
