@@ -6,12 +6,18 @@ def multi_SDE_plot(simulation_data):
 
     Args:
         simulation_data (dict): Dictionary containing simulation data.
+            It should contain the following keys:
+            - 'simulation': Matrix containing simulated stock prices.
+            - 'true_stock_data' (StockData): Object containing historical stock data.
+            - 'true_stock_prices' (numpy.ndarray): True stock prices.
+            - 'ticker' (str): Ticker symbol of the stock.
 
     Returns:
         None
     """
     simulated_prices = simulation_data['simulation']
     ticker = simulation_data['true_stock_data'].ticker
+    method_name = simulation_data['method_name']
 
     plt.figure(figsize=(10, 6))
     
@@ -19,7 +25,7 @@ def multi_SDE_plot(simulation_data):
     for i in range(simulated_prices.shape[0]):
         plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
 
-    plt.title(f'Simulated Stock Prices {ticker}')
+    plt.title(f'{method_name} -\nSimulated Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
@@ -32,6 +38,11 @@ def dual_multi_SDE_plot(simulation_data):
 
     Args:
         simulation_data (dict): Dictionary containing simulation data.
+            It should contain the following keys:
+            - 'simulation': Matrix containing simulated stock prices.
+            - 'true_stock_prices' (numpy.ndarray): True stock prices.
+            - 'true_stock_data' (StockData): Object containing historical stock data.
+            - 'ticker' (str): Ticker symbol of the stock.
 
     Returns:
         None
@@ -39,6 +50,7 @@ def dual_multi_SDE_plot(simulation_data):
     simulated_prices = simulation_data['simulation']
     true_prices = simulation_data['true_stock_prices']
     ticker = simulation_data['true_stock_data'].ticker
+    method_name = simulation_data['method_name']
 
     plt.figure(figsize=(10, 6))
     
@@ -49,36 +61,7 @@ def dual_multi_SDE_plot(simulation_data):
     # Plot true stock prices
     plt.plot(true_prices, color='red', label='True Prices')
     
-    plt.title(f'Simulated vs. True Stock Prices {ticker}')
-    plt.xlabel('Time Steps')
-    plt.ylabel('Stock Price')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def plot_single_estimated_path(simulation_data):
-    """
-    Plots a single estimated stock price path compared to true stock prices.
-
-    Args:
-        simulation_data (dict): Dictionary containing simulation data.
-
-    Returns:
-        None
-    """
-    true_path = simulation_data['true_stock_prices']
-    estimated_path = simulation_data['mean_path']
-    ticker = simulation_data['true_stock_data'].ticker
-
-    plt.figure(figsize=(10, 6))
-    
-    # Plot true stock prices
-    plt.plot(true_path, color='red', label='True Prices')
-    
-    # Plot estimated stock prices
-    plt.plot(estimated_path, color='blue', label='Estimated Prices')
-    
-    plt.title(f'Single Estimated Path vs. True Stock Prices {ticker}')
+    plt.title(f'{method_name} -\nSimulated vs. True Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
@@ -91,6 +74,13 @@ def plot_comparison_mid(simulation_data):
 
     Args:
         simulation_data (dict): Dictionary containing simulation data.
+            It should contain the following keys:
+            - 'true_stock_prices' (numpy.ndarray): True stock prices.
+            - 'median_path' (numpy.ndarray): Median stock prices.
+            - 'middle_path' (numpy.ndarray): Middle stock prices.
+            - 'mean_path' (numpy.ndarray): Mean stock prices.
+            - 'true_stock_data' (StockData): Object containing historical stock data.
+            - 'ticker' (str): Ticker symbol of the stock.
 
     Returns:
         None
@@ -100,6 +90,7 @@ def plot_comparison_mid(simulation_data):
     middle_prices = simulation_data['middle_path']
     mean_prices = simulation_data['mean_path']
     ticker = simulation_data['true_stock_data'].ticker
+    method_name = simulation_data['method_name']
 
     plt.figure(figsize=(10, 6))
     
@@ -112,7 +103,7 @@ def plot_comparison_mid(simulation_data):
     # Plot mean stock prices
     plt.plot(mean_prices, color='orange', label='Mean Prices')
     
-    plt.title(f'Comparison of True, Median, Middle, and Mean Stock Prices {ticker}')
+    plt.title(f'{method_name} -\nSingle Path Estimation vs. True Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
@@ -122,45 +113,53 @@ def plot_comparison_mid(simulation_data):
 def combined_plot(simulation_data):
     """
     Creates a combined plot showing multiple simulated stock price paths compared to true stock values 
-    and the comparison of true, median, middle, and mean stock prices.
+    and the comparison of true, median, middle, and mean stock prices. This function creates two subplots.
+    The left plot is the same as the plot created by dual_multi_SDE_plot and the plot on the right is the
+    one created by plot_comparison_mid.
 
     Args:
         simulation_data (dict): Dictionary containing simulation data.
+            It should contain the following keys:
+            - 'simulation': Matrix containing simulated stock prices.
+            - 'true_stock_prices' (numpy.ndarray): True stock prices.
+            - 'true_stock_data' (StockData): Object containing historical stock data.
+            - 'median_path' (numpy.ndarray): Median stock prices.
+            - 'middle_path' (numpy.ndarray): Middle stock prices.
+            - 'mean_path' (numpy.ndarray): Mean stock prices.
+            - 'ticker' (str): Ticker symbol of the stock.
+            - 'method_name' (str): Name of the method used for simulation.
 
     Returns:
         None
     """
-    plt.figure(figsize=(16, 6))
-
-    # Plotting dual_multi_SDE_plot on the left side
-    plt.subplot(1, 2, 1)
     simulated_prices = simulation_data['simulation']
     true_prices = simulation_data['true_stock_prices']
+    median_prices = simulation_data['median_path']
+    middle_prices = simulation_data['middle_path']
+    mean_prices = simulation_data['mean_path']
     ticker = simulation_data['true_stock_data'].ticker
+    method_name = simulation_data['method_name']
 
+    plt.figure(figsize=(16, 6))
+
+    # Plot simulated stock prices
+    plt.subplot(1, 2, 1)
     for i in range(simulated_prices.shape[0]):
         plt.plot(simulated_prices[i], color='blue', alpha=0.5, label='Simulated Prices' if i == 0 else '')
-
     plt.plot(true_prices, color='red', label='True Prices')
-    plt.title(f'Simulated vs. True Stock Prices {ticker}')
+    plt.title(f'{method_name} -\nSimulated vs. True Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
     plt.grid(True)
 
-    # Plotting plot_comparison_mid on the right side
+    # Plot comparison of true, median, middle, and mean stock prices
     plt.subplot(1, 2, 2)
-    true_prices = simulation_data['true_stock_prices']
-    median_prices = simulation_data['median_path']
-    middle_prices = simulation_data['middle_path']
-    mean_prices = simulation_data['mean_path']
-
     plt.plot(true_prices, color='red', label='True Prices')
     plt.plot(median_prices, color='blue', label='Median Prices')
     plt.plot(middle_prices, color='green', label='Middle Prices')
     plt.plot(mean_prices, color='orange', label='Mean Prices')
-
-    plt.title(f'Comparison of True, Median, Middle, and Mean Stock Prices {ticker}')
+    plt.title(f'{method_name} -\nSingle Path Estimation vs. True Stock Prices {ticker}')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
     plt.legend()
