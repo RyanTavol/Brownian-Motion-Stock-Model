@@ -215,10 +215,11 @@ if __name__=='__main__':
     stockTicker = "IBM"
     dataStart = None
     dataEnd = "2023-01-01"
-    simEnd = "2025-01-01"
+    simEnd = "2024-01-01"
     muFunc = muBootstrap
     sigmaFunc = sigma1Bootstrap
     methodName = "Bootstrap (Common Volatility)"
+    
 
     # simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
 
@@ -227,11 +228,11 @@ if __name__=='__main__':
     # simulation_data = simulateSingleMethod(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc, methodName)
     # compareSingle(simulation_data)
 
-    # simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
-    # compareMultiple(simulation_data_all)
+    simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
+    compareMultiple(simulation_data_all)
 
     # simulation_data = simulateFutureSingle(stockTicker, dataStart, simEnd, muFunc, sigmaFunc, methodName)
     # plotSingleFuture(simulation_data)
 
-    simulation_data_all = simulateFutureAllMethods(stockTicker, dataStart, simEnd) 
-    plotMultipleFuture(simulation_data_all)
+    # simulation_data_all = simulateFutureAllMethods(stockTicker, dataStart, simEnd) 
+    # plotMultipleFuture(simulation_data_all)
