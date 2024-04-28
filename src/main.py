@@ -1,238 +1,99 @@
-import numpy as np
-from fetchStocks import StockData
-from simulateSDE import *
-from plot import *
-from analysis import *
+from mainHelpers import *
 
-import sys
-sys.path.append('./parameterMethods')
-from fixedParameters import muFixedParam, sigmaFixedParam
-from capm import muCAPM, sigmaCAPM
-# from mle import muMLE, sigmaMLE
-from kde import muKDE, sigmaKDE
-# from bayesian import muBayesian, sigmaBayesian
-from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
+FIXEDPARAM = "Fixed Parameters"
+CAPM = "Capital Asset Pricing Model (CAPM)"
+BOOTSTRAP_CV = "Bootstrap (Common Volatility)"
+BOOTSTRAP_LV = "Bootstrap (Log Volatility)"
 
-print("Running Main:")
-
-# Set The Simulation Seed
-SIMULATION_SEED = None
-if(SIMULATION_SEED is None):
-    SIMULATION_SEED = np.random.randint(0,1000)
-
-np.random.seed(SIMULATION_SEED)
-print("Seed:", SIMULATION_SEED)
-
-# Consider changing this to a dictionary instead
-PARAMETER_FUNCTIONS =   [\
-                            ["Fixed Parameters", (muFixedParam, sigmaFixedParam) ],
-                            ["Capital Asset Pricing Model (CAPM)", (muCAPM, sigmaCAPM)],
-                            ["Bootstrap (Common Volatility)", (muBootstrap, sigma1Bootstrap)],
-                            ["Bootstrap (Log Volatility)", (muBootstrap, sigma2Bootstrap)],
-                            # ["Kernel Density Estimation (KDE)", (muKDE, sigmaKDE)],
-                            # Add other parameter methods here
-                        ]
-
-def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name, stock_data = None):
-    """
-    Simulate a single method for stock price prediction.
-
-    Args:
-        ticker (str): Ticker symbol of the stock.
-        data_start_date (str): Start date of historical data.
-        data_end_date (str): End date of historical data.
-        sim_end_date (str): End date of the simulation.
-        mu_function (function): Function to calculate the mean parameter.
-        sigma_function (function): Function to calculate the standard deviation parameter.
-        method_name (str): Name of the simulation method.
-        stock_data (StockData, optional): Object containing historical stock data. Defaults to None.
-
-    Returns:
-        dict: Dictionary containing simulation data.
-    """
-    # Set Up Stock And "Previous History"
-    if(stock_data is None):
-        stock = StockData(ticker)
-    else:
-        stock = stock_data
-    data = StockData(ticker, stock.getStockDataRange(data_start_date, data_end_date), stock.market_data_df)
-    trueStockData = StockData(ticker,stock.getStockDataRange(data.end_date, sim_end_date), stock.market_data_df)
-
-    trueStockPrices = trueStockData.getClosingPrices()  
-    # Simulate Stock Price
-    simulation = simulate_stock_prices(data, mu_function, sigma_function, dt = 1/(len(trueStockPrices)-1))
-
-    # Extrapolate Single Paths
-    middle = select_middle_path(simulation)
-    median = compute_median_path(simulation)
-    mean = compute_mean_path(simulation)
-
-    simulation_data =   {
-                            'method_name': method_name,
-                            'true_stock_data': trueStockData,
-                            'true_stock_prices': trueStockPrices,
-                            'simulation': simulation,
-                            'middle_path': middle,
-                            'median_path': median,
-                            'mean_path': mean,
-                        }
-    
-    return simulation_data
-
-def compareSingle(simulation_data):
-    """
-    Compare a single simulation.
-
-    Args:
-        simulation_data (dict): Dictionary containing simulation data.
-
-    Returns:
-        None
-    """
-    print("\n"+simulation_data['method_name']+"\n")
-    print(analyzeAll(simulation_data))
-    combined_plot_comparison(simulation_data)
-
-def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
-    """
-    Simulate all methods for stock price prediction.
-
-    Args:
-        ticker (str): Ticker symbol of the stock.
-        data_start_date (str): Start date of historical data.
-        data_end_date (str): End date of historical data.
-        sim_end_date (str): End date of the simulation.
-
-    Returns:
-        list: List of dictionaries containing simulation data for each method.
-    """
-    # Each Time You Compare Remember To Reset The Seed
-    # Going To Be A List Of (Methodname: Dictionary)
-    simulation_results = []
-    stock = StockData(ticker)
-    for method_name, param_funcs in PARAMETER_FUNCTIONS:
-        np.random.seed(SIMULATION_SEED)
-        mu_function, sigma_function = param_funcs
-        simulation_data = simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, mu_function, sigma_function, method_name, stock)
-        print(f"Simulation Complete: [{method_name}]")
-        simulation_results.append(simulation_data)
-        
-    return simulation_results
-
-def compareMultiple(simulation_data_list):
-    """
-    Compare multiple simulations.
-
-    Args:
-        simulation_data_list (list): List of dictionaries containing simulation data for each method.
-
-    Returns:
-        None
-    """
-    for simulation_data in simulation_data_list:
-        compareSingle(simulation_data)
-
-def simulateFutureSingle(ticker, data_start_date, sim_end_date, mu_function, sigma_function, method_name, stock_data = None):
-    """
-    Simulate future stock prices from today. Simulations have nothing to compare them to.
-
-    Returns:
-        dict: Dictionary containing simulation data.
-    """
-    if(stock_data is None):
-        stock = StockData(ticker)
-    else:
-        stock = stock_data
-    data = StockData(ticker, stock.getStockDataRange(data_start_date, None), stock.market_data_df)
-    simulation = simulate_stock_prices(data, mu_function, sigma_function)
-
-    # Extrapolate Single Paths
-    middle = select_middle_path(simulation)
-    median = compute_median_path(simulation)
-    mean = compute_mean_path(simulation)
-
-    simulation_data =   {
-                            'method_name': method_name,
-                            'simulation': simulation,
-                            'middle_path': middle,
-                            'median_path': median,
-                            'mean_path': mean,
-                        }
-    
-    return simulation_data
-
-def simulateFutureAllMethods(ticker, data_start_date, sim_end_date):
-    """
-    Simulates future stock prices using different methods.
-
-    Args:
-        ticker (str): Ticker symbol of the stock.
-        data_start_date (str): Start date for historical data.
-        sim_end_date (str): End date for simulation.
-
-    Returns:
-        list: List of dictionaries containing simulation data for each method.
-    """
-    simulation_results = []
-    stock = StockData(ticker)
-    for method_name, param_funcs in PARAMETER_FUNCTIONS:
-        np.random.seed(SIMULATION_SEED)
-        mu_function, sigma_function = param_funcs
-        simulation_data = simulateFutureSingle(ticker, data_start_date, sim_end_date, mu_function, sigma_function, method_name, stock)
-        print(f"Simulation Complete: [{method_name}]")
-        simulation_results.append(simulation_data)
-        
-    return simulation_results
-
-def plotSingleFuture(simulation_data):
-    """
-    Plots future stock price predictions for a single method.
-
-    Args:
-        simulation_data (dict): Dictionary containing simulation data.
-
-    Returns:
-        None
-    """
-    combined_plot_future(simulation_data)
-
-
-def plotMultipleFuture(simulation_data_list):
-    """
-    Plots future stock price predictions for multiple methods.
-
-    Args:
-        simulation_data_list (list): List of dictionaries containing simulation data for each method.
-
-    Returns:
-        None
-    """
-    for simulation_data in simulation_data_list:
-        plotSingleFuture(simulation_data)
+# Main Function For Interactability
+# Please Feel Free To Change The Code In Main To Test Whatever You Would Like
+# Please See mainHelpers.py for functions that you can call
 
 if __name__=='__main__':
-        
-    stockTicker = "IBM"
-    dataStart = None
-    dataEnd = "2023-01-01"
-    simEnd = "2024-01-01"
-    muFunc = muBootstrap
-    sigmaFunc = sigma1Bootstrap
-    methodName = "Bootstrap (Common Volatility)"
+    print("Running Main:")
+
+    # Feel Free To Set The Seed With An Integer Of Your Choice
+    setSeed()  
+
+    """
+    Below are a number of variables that you can change in order to test this code however you would like.
+
+    Please read the comments above each variable to understand how to use the variables and what will be
+    acceptable versus what will safely throw and error. If you give an invalid value, you will (hopefully)
+    be returned with a helpful and descriptive ValueError thrown in the terminal.
+
+    If you want to change what functions you want to interact with, see the other block comment down below.
+    """
     
 
-    # simulateAndCompare(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc)
+    # Must be a valid Stock Ticker In The SP500
+    stockTicker = "IBM"
 
-    # simulateAndCompareAllFunc(stockTicker, dataStart, dataEnd, simEnd )
+    # Must be a valid date in the past to fetch the stock data from that point on
+    # If dataStart is None, then the start date will be the very first date of this stock
+    dataStart = None
 
-    # simulation_data = simulateSingleMethod(stockTicker, dataStart, dataEnd, simEnd, muFunc, sigmaFunc, methodName)
-    # compareSingle(simulation_data)
+    # Must be a valid date in the past to fetch the stock data from that point on
+    # If dataEnd is None, then the end date will be the last business trading day
+    dataEnd = "2023-01-01"
 
-    simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
-    compareMultiple(simulation_data_all)
+    # Must be a valid date greater than dataEnd. It cannot be None
+    # If you want to use one of the simulate and compare functions, this must be a past date
+        # So that the simulation can be compared to the true stock data
+    # If you want to use one of the future simulation functions, this must be a future date
+    simEnd = "2024-01-01"
 
-    # simulation_data = simulateFutureSingle(stockTicker, dataStart, simEnd, muFunc, sigmaFunc, methodName)
-    # plotSingleFuture(simulation_data)
+    # Must be one of the constant variables above.
+    # Determines which parameter finding method you want to test (if you are only testing 1)
+    methodName = BOOTSTRAP_CV
 
-    # simulation_data_all = simulateFutureAllMethods(stockTicker, dataStart, simEnd) 
-    # plotMultipleFuture(simulation_data_all)
+    """
+    Below are a number of different functions that you can comment or uncomment to test this code however
+    you would like.
+
+    Please read the comments above each function to understand how to use it and if there is any other important
+    information to know. If any of your above variables are invalid, like I said earlier it will safely throw a 
+    ValueError. For more information about the variables, please see the above block comment.
+
+    If the comments below are not descriptive enough, please feel free to take a look inside of 'mainHelpers.py'
+    which includes all of the functions you are able to interact with inside of main. Inside there each function
+    is implemented, but also has a good description of it via their doc comments. 
+
+    It is not recommended that you change any of the code below other than commenting/uncommenting certain lines.
+    I intentionally tried my best to offer as much functionality as possible to do whatever you want. It is recommended
+    also that you uncomment both (or more if there are more) lines under each comment. If you do choose to change the 
+    code in here at all, please make sure you read the documentation inside 'mainHelpers.py' so you understand how to use it
+    """
+
+
+    # The following code is used to simulate a single parameter estimation method and compare it to real-life stock data
+    # compareSingle has some additional optional parameters if you want to include/exclude the analysis data and the plotting 
+    # as well as if you want the analysis data to be compact or not.
+    # default values: analyze = True, plot = True, compact = False
+
+    # singleSim = simulateSingleMethod(stockTicker, dataStart, dataEnd, simEnd, methodName)
+    # compareSingle(singleSim)    
+
+
+
+    # The following code is used to simulate all the parameter estimation methods and compare them to real-life stock data
+    # compareMultiple has some additional optional parameters if you want to include/exclude the analysis data and the plotting
+    # as well as if you want the analysis data to be compact or not. I recommend compact = True for this thought.
+    # default values: analyze = True, plot = True, compact = False
+
+    allSims = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
+    compareMultipleMethods(allSims, compact=True)
+
+
+
+    # The following code is used to simulate a single parameter estimation method for the future and plot it.
+
+    # singleFutureSim = simulateFutureSingle(stockTicker, dataStart, simEnd, methodName)
+    # plotSingleFuture(singleFutureSim)
+
+
+
+    # The following code is used to simulate all the parameter estimation methods for the future and plot them.
+
+    # allFutureSims = simulateFutureAllMethods(stockTicker, dataStart, simEnd)
+    # plotMultipleFuture(allFutureSims)
