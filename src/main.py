@@ -70,6 +70,7 @@ def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, m
     mean = compute_mean_path(simulation)
 
     simulation_data =   {
+                            'ticker': ticker,
                             'method_name': method_name,
                             'true_stock_data': trueStockData,
                             'true_stock_prices': trueStockPrices,
@@ -81,7 +82,7 @@ def simulateSingleMethod(ticker, data_start_date, data_end_date, sim_end_date, m
     
     return simulation_data
 
-def compareSingle(simulation_data, analyze = True, plot = True):
+def compareSingle(simulation_data, analyze = True, plot = True, compact = False):
     """
     Compare a single simulation.
 
@@ -93,11 +94,12 @@ def compareSingle(simulation_data, analyze = True, plot = True):
     Returns:
         return analysis dictionary object as returned by analyzeAll
     """
-    print("\n"+simulation_data['method_name']+"\n")
-
+   
     if analyze:
-        analysis = analyzeAll(simulation_data)
-        print(analysis)
+        print("\nAnalysis For: ",simulation_data["ticker"])
+        print(createTable([simulation_data], compact))
+        # analysis = analyzeAll(simulation_data)
+        # print(analysis)
     if plot:
         combined_plot_comparison(simulation_data)
 
@@ -127,7 +129,7 @@ def simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date):
         
     return simulation_results
 
-def compareMultiple(simulation_data_list, analyze = True, plot = True):
+def compareMultipleMethods(simulation_data_list, analyze = True, plot = True, compact = False):
     """
     Compare multiple simulations.
 
@@ -137,37 +139,37 @@ def compareMultiple(simulation_data_list, analyze = True, plot = True):
     Returns:
         None
     """
-    analysis_list = []
     for simulation_data in simulation_data_list:
         if plot:
             compareSingle(simulation_data, False, True)
     if analyze:
-        createTable(simulation_data_list)
-        # analysis_list.append(simulation_data['method_name'],analyzeAll(simulation_data))
+        print("\nAnalysis For: ",simulation_data_list[0]["ticker"])
+        print(createTable(simulation_data_list, compact))
+
         
-def createTable(simulation_data_list):
+def createTable(simulation_data_list, compact = False):
     myData = []
-    # myTable = PrettyTable(["Method Name", "Analysis Group", "Correlation Coefficient", "MAPE", "Percentage Inliers"])
     for simulation_data in simulation_data_list:
         analysis = analyzeAll(simulation_data)
         multiA = analysis["Multi_Analysis"]
         meanA = analysis["Mean_Analysis"]
         medianA = analysis["Median_Analysis"]
         middleA = analysis["Middle_Analysis"]
-        myData.append([simulation_data["method_name"], "Multiple Paths", multiA[0][1], multiA[1][1], multiA[2][1]])
-        myData.append([simulation_data["method_name"], "Mean Path", meanA[0][1], meanA[1][1], meanA[2][1]])
-        myData.append([simulation_data["method_name"], "Median Path", medianA[0][1], medianA[1][1], medianA[2][1]])
-        myData.append([simulation_data["method_name"], "Middle Path", middleA[0][1], middleA[1][1], middleA[2][1]])
-        # myTable.add_row([simulation_data["method_name"], "Multiple Paths", multiA[0][1], multiA[1][1], multiA[2][1]])
-        # myTable.add_row([simulation_data["method_name"], "Mean Path", meanA[0][1], meanA[1][1], meanA[2][1]])
-        # myTable.add_row([simulation_data["method_name"], "Median Path", medianA[0][1], medianA[1][1], medianA[2][1]])
-        # myTable.add_row([simulation_data["method_name"], "Middle Path", middleA[0][1], middleA[1][1], middleA[2][1]])
-    
+        methodName = simulation_data["method_name"]
+
+        if not compact:
+            myData.append([methodName, "Multiple Paths", multiA[0][1], multiA[1][1], multiA[2][1]])
+            myData.append([methodName, "Mean Path", meanA[0][1], meanA[1][1], meanA[2][1]])
+            myData.append([methodName, "Median Path", medianA[0][1], medianA[1][1], medianA[2][1]])
+            myData.append([methodName, "Middle Path", middleA[0][1], middleA[1][1], middleA[2][1]])
+        avgCC = np.mean([multiA[0][1], meanA[0][1], medianA[0][1],middleA[0][1]])
+        avgMAPE = np.mean([multiA[1][1], meanA[1][1], medianA[1][1],middleA[1][1]])
+        avgPI = np.mean([multiA[2][1], meanA[2][1], medianA[2][1],middleA[2][1]])
+        myData.append([methodName, "Average of Path Types", avgCC, avgMAPE, avgPI])
+              
     head = ["Method Name", "Analysis Group", "Correlation Coefficient", "MAPE", "Percentage Inliers"]
     table = tabulate(myData, headers=head, tablefmt="grid")
-    print(table)
-
-
+    return table
 
 def simulateFutureSingle(ticker, data_start_date, sim_end_date, mu_function, sigma_function, method_name, stock_data = None):
     """
@@ -189,6 +191,7 @@ def simulateFutureSingle(ticker, data_start_date, sim_end_date, mu_function, sig
     mean = compute_mean_path(simulation)
 
     simulation_data =   {
+                            'ticker': ticker,
                             'method_name': method_name,
                             'simulation': simulation,
                             'middle_path': middle,
@@ -249,7 +252,7 @@ def plotMultipleFuture(simulation_data_list):
 
 if __name__=='__main__':
         
-    stockTicker = "IBM"
+    stockTicker = "AAPL"
     dataStart = None
     dataEnd = "2023-01-01"
     simEnd = "2024-01-01"
@@ -266,7 +269,7 @@ if __name__=='__main__':
     # compareSingle(simulation_data)
 
     simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
-    compareMultiple(simulation_data_all)
+    compareMultipleMethods(simulation_data_all, compact = False)
 
     # simulation_data = simulateFutureSingle(stockTicker, dataStart, simEnd, muFunc, sigmaFunc, methodName)
     # plotSingleFuture(simulation_data)
