@@ -157,15 +157,15 @@ def createTable(simulation_data_list, compact = False):
         middleA = analysis["Middle_Analysis"]
         methodName = simulation_data["method_name"]
 
+        myData.append([methodName, "Multiple Paths", multiA[0][1], multiA[1][1], multiA[2][1]])
         if not compact:
-            myData.append([methodName, "Multiple Paths", multiA[0][1], multiA[1][1], multiA[2][1]])
             myData.append([methodName, "Mean Path", meanA[0][1], meanA[1][1], meanA[2][1]])
             myData.append([methodName, "Median Path", medianA[0][1], medianA[1][1], medianA[2][1]])
             myData.append([methodName, "Middle Path", middleA[0][1], middleA[1][1], middleA[2][1]])
-        avgCC = np.mean([multiA[0][1], meanA[0][1], medianA[0][1],middleA[0][1]])
-        avgMAPE = np.mean([multiA[1][1], meanA[1][1], medianA[1][1],middleA[1][1]])
-        avgPI = np.mean([multiA[2][1], meanA[2][1], medianA[2][1],middleA[2][1]])
-        myData.append([methodName, "Average of Path Types", avgCC, avgMAPE, avgPI])
+        avgCC = np.mean([meanA[0][1], medianA[0][1],middleA[0][1]])
+        avgMAPE = np.mean([meanA[1][1], medianA[1][1],middleA[1][1]])
+        avgPI = np.mean([meanA[2][1], medianA[2][1],middleA[2][1]])
+        myData.append([methodName, "Average of Single Paths", avgCC, avgMAPE, avgPI])
               
     head = ["Method Name", "Analysis Group", "Correlation Coefficient", "MAPE", "Percentage Inliers"]
     table = tabulate(myData, headers=head, tablefmt="grid")
@@ -269,7 +269,7 @@ if __name__=='__main__':
     # compareSingle(simulation_data)
 
     simulation_data_all = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
-    compareMultipleMethods(simulation_data_all, compact = False)
+    compareMultipleMethods(simulation_data_all, compact = True, plot = True)
 
     # simulation_data = simulateFutureSingle(stockTicker, dataStart, simEnd, muFunc, sigmaFunc, methodName)
     # plotSingleFuture(simulation_data)

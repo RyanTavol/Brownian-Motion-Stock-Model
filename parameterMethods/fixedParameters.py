@@ -32,4 +32,4 @@ def sigmaFixedParam(stock: StockData, estimations, T, dt, pathIndex, futureTimeI
     Returns:
         float: Volatility parameter (sigma).
     """
-    return 0.1
+    return 0.2

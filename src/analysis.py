@@ -91,12 +91,12 @@ def percentage_of_correct_predictions(true_prices, simulated_prices, threshold=0
     Args:
         true_prices (numpy.ndarray): True stock prices.
         simulated_prices (numpy.ndarray): Simulated stock prices.
-        threshold (float): Threshold for considering predictions correct.
+        threshold (float): Threshold for considering predictions correct. It is the percent error allowable
 
     Returns:
         percentage (float): Percentage of correct predictions within the threshold.
     """
-    absolute_errors = np.abs(true_prices - simulated_prices)
+    absolute_errors = np.abs((true_prices - simulated_prices) / true_prices)
     correct_predictions = absolute_errors <= threshold
     percentage = np.mean(correct_predictions) * 100
 
@@ -118,7 +118,7 @@ def percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi,
     correct_predictions = np.zeros(num_steps)
 
     for i in range(num_steps):
-        absolute_errors = np.abs(true_prices[i] - simulated_prices_multi[:, i])
+        absolute_errors = np.abs((true_prices[i] - simulated_prices_multi[:, i]) / true_prices[i])
         correct_predictions[i] = np.mean(absolute_errors <= threshold)
 
     percentage = np.mean(correct_predictions) * 100
