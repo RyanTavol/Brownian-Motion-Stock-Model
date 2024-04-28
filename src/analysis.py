@@ -126,6 +126,17 @@ def percentage_of_correct_predictions_multi(true_prices, simulated_prices_multi,
     return percentage
 
 def analyzeAllSingle(true_prices, simulated_prices):
+    """
+    Analyzes single method simulations against true stock prices.
+
+    Args:
+        true_prices (numpy.ndarray): True stock prices.
+        simulated_prices (numpy.ndarray): Simulated stock prices.
+
+    Returns:
+        list: A list of tuples containing analysis results for each metric.
+            Each tuple contains the name of the metric and its corresponding value.
+    """
     results = \
             [ \
                ("Correlation Coefficient", correlation_coefficient(true_prices, simulated_prices)),
@@ -135,6 +146,17 @@ def analyzeAllSingle(true_prices, simulated_prices):
     return results
 
 def analyzeAllMulti(true_prices, simulated_prices_multi): 
+    """
+    Analyzes multi-method simulations against true stock prices.
+
+    Args:
+        true_prices (numpy.ndarray): True stock prices.
+        simulated_prices_multi (numpy.ndarray): Simulated stock prices for multiple methods.
+
+    Returns:
+        list: A list of tuples containing analysis results for each metric.
+            Each tuple contains the name of the metric and its corresponding value.
+    """
     results = \
             [ \
                ("Correlation Coefficient", correlation_coefficient_multi(true_prices, simulated_prices_multi)),
@@ -145,6 +167,17 @@ def analyzeAllMulti(true_prices, simulated_prices_multi):
 
 # Consider Improving This Function To Display It Nicer Or In A Better Format:
 def analyzeAll(simulation_data):
+    """
+    Analyzes simulation results for all methods.
+
+    Args:
+        simulation_data (dict): Dictionary containing simulation data.
+
+    Returns:
+        dict: A dictionary containing analysis results for each method.
+            Each key corresponds to a method name, and each value is a list of tuples
+            containing analysis results for that method.
+    """
     trueStockPrices = simulation_data['true_stock_prices']
     return {
         "Multi_Analysis" : analyzeAllMulti(trueStockPrices, simulation_data['simulation']),
