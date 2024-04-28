@@ -1,17 +1,15 @@
 import numpy as np
 import datetime
 from tabulate import tabulate
-from fetchStocks import StockData
-from simulateSDE import *
-from plot import *
-from analysis import *
+from SRC_fetchStocks import StockData
+from SRC_simulateSDE import *
+from SRC_plot import *
+from SRC_analysis import *
+from PARAM_fixedParameters import muFixedParam, sigmaFixedParam
+from PARAM_capm import muCAPM, sigmaCAPM
+from PARAM_bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
+from PARAM_kde import muKDE, sigmaKDE
 
-import sys
-sys.path.append('./parameterMethods')
-from fixedParameters import muFixedParam, sigmaFixedParam
-from capm import muCAPM, sigmaCAPM
-from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
-from kde import muKDE, sigmaKDE
 # from mle import muMLE, sigmaMLE
 # from bayesian import muBayesian, sigmaBayesian
 
