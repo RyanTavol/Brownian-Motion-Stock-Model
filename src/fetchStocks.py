@@ -185,5 +185,4 @@ class StockData:
         Returns:
             stock_data (pandas.DataFrame): DataFrame containing stock data for the specified range.
         """
-        # TODO Add error handling
         return self.stock_data_df[start_date:end_date]

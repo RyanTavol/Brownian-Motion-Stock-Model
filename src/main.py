@@ -4,6 +4,7 @@ FIXEDPARAM = "Fixed Parameters"
 CAPM = "Capital Asset Pricing Model (CAPM)"
 BOOTSTRAP_CV = "Bootstrap (Common Volatility)"
 BOOTSTRAP_LV = "Bootstrap (Log Volatility)"
+METHOD_OF_MOMENTS = "Method Of Moments"
 
 # Main Function For Interactability
 # Please Feel Free To Change The Code In Main To Test Whatever You Would Like
