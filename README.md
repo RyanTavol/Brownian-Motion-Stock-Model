@@ -3,7 +3,9 @@
 This is a project for Math 552
 
 Instructions For Running The Code:
+
 1.Make Sure git and python are installed on your computer
+
 2. Clone The Repository
   - Open an Empty Directory
   Inside Terminal From /Brownian-Motion-Stock-Model:
