@@ -14,13 +14,14 @@ from bootstrap import muBootstrap, sigma1Bootstrap, sigma2Bootstrap
 from kde import muKDE, sigmaKDE
 # from mle import muMLE, sigmaMLE
 # from bayesian import muBayesian, sigmaBayesian
+from moments import muMethodOfMoments, sigmaMethodOfMoments
 
 PARAMETER_FUNCTIONS =   {
                             "Fixed Parameters": (muFixedParam, sigmaFixedParam),
                             "Capital Asset Pricing Model (CAPM)": (muCAPM, sigmaCAPM),
                             "Bootstrap (Common Volatility)" : (muBootstrap, sigma1Bootstrap),
                             "Bootstrap (Log Volatility)": (muBootstrap, sigma2Bootstrap),
-                            # "Kernel Density Estimation (KDE)" : (muKDE, sigmaKDE),
+                            "Method Of Moments" : (muMethodOfMoments, sigmaMethodOfMoments),
                         }
 
 SIMULATION_SEED = None
