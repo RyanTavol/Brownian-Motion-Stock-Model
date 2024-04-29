@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KernelDensity
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 
 def simulate_stock_prices(stock_history: StockData, mu_function, sigma_function, T = 1, dt = 1/250, num_paths = 10):
     """

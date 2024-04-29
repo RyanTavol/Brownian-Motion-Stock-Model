@@ -1,4 +1,4 @@
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 
 def muFixedParam(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
     """

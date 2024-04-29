@@ -1,5 +1,5 @@
 import numpy as np
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 import pandas as pd
 
 

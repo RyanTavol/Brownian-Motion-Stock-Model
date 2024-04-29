@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.neighbors import KernelDensity
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 
 def muKDE(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
     """

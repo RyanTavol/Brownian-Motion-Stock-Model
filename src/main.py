@@ -1,4 +1,4 @@
-from SRC_mainHelpers import *
+from mainHelpers import *
 
 FIXEDPARAM = "Fixed Parameters"
 CAPM = "Capital Asset Pricing Model (CAPM)"

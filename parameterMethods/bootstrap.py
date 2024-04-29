@@ -1,5 +1,5 @@
 import numpy as np
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 import pandas as pd
 
 def muBootstrap(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
@@ -29,7 +29,7 @@ def muBootstrap(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex
     return mu
 
 import numpy as np
-from SRC_fetchStocks import StockData
+from fetchStocks import StockData
 
 def sigma1Bootstrap(stock: StockData, estimations, T, dt, pathIndex, futureTimeIndex):
     """
