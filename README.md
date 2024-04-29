@@ -8,8 +8,8 @@ Instructions For Running The Code:
 
 2. Clone The Repository
   - Open an Empty Directory
-  
-  - Inside Terminal From /Brownian-Motion-Stock-Model:
+  - Navigate to that directory in your terminal
+  - Inside Terminal From /'your_empty_directory':
     - git clone 'this github url'
     - cd 'Brownian-Motion-Stock-Model'
 
