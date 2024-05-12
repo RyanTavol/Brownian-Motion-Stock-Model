@@ -31,7 +31,19 @@ if __name__=='__main__':
     stockTicker = "IBM"
 
     # Must be a list of valid Stock Tickers In The SP500
-    stockList = ["IBM", "AAPL"]
+    # This is a random list of 50 stocks that I chose. You can change this to whatever you would like
+    stockList = [
+        "AAPL", "DG", "DIS", "IBM", "INTC",
+        "NVDA", "PG", "SHW", "TXN", "AMZN",
+        "GOOGL", "MSFT", "TSLA", "JNJ", "JPM",
+        "KO", "VZ", "NFLX", "CSCO", "PEP",
+        "WMT", "UNH", "HD", "BAC", "MA",
+        "V", "MRK", "CMCSA", "META", "PYPL",
+        "ABBV", "ABT", "ADBE", "ADI", "ADP",
+        "ADSK", "AEP", "ALGN", "ALL", "AMAT",
+        "AMD", "AMGN", "RMD", "AON", "APD",
+        "APH", "AZO", "BA", "BAX"
+    ]
 
     # Must be a valid date in the past to fetch the stock data from that point on
     # If dataStart is None, then the start date will be the very first date of this stock
@@ -85,8 +97,8 @@ if __name__=='__main__':
     # as well as if you want the analysis data to be compact or not. I recommend compact = True for this thought.
     # default values: analyze = True, plot = True, compact = False
 
-    # allSims = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
-    # compareMultipleMethods(allSims, compact=True)
+    allSims = simulateAllMethods(stockTicker, dataStart, dataEnd, simEnd)
+    compareMultipleMethods(allSims, compact=True)
 
 
 
@@ -105,5 +117,5 @@ if __name__=='__main__':
 
 
     # The following code is used to compare a all parameter estimation methods for a list of stocks and aggregate results
-    compareManyStocks(stockList, dataStart, dataEnd, simEnd)
+    # compareManyStocks(stockList, dataStart, dataEnd, simEnd)
     
