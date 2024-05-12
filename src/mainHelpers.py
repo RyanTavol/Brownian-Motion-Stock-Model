@@ -197,6 +197,78 @@ def compareMultipleMethods(simulation_data_list, analyze = True, plot = True, co
         print("\nAnalysis For: ",simulation_data_list[0]["ticker"])
         print(createTable(simulation_data_list, compact))
 
+def simulateManyStocks(tickers, data_start_date, data_end_date, sim_end_date):
+    """
+    Simulate multiple stocks using a single method.
+
+    Args:
+        tickers (list): List of stock ticker symbols.
+        data_start_date (str): Start date of historical data.
+        data_end_date (str): End date of historical data.
+        sim_end_date (str): End date of the simulation.
+        method_name (str): Name of the simulation method.
+
+    Returns:
+        list: List of dictionaries containing simulation data for each stock.
+    """
+    stock_data_list = []
+    for ticker in tickers:
+        simulation_data = simulateAllMethods(ticker, data_start_date, data_end_date, sim_end_date)
+        stock_data_list.append(simulation_data)
+    return stock_data_list
+
+
+def compareManyStocks(tickers, data_start_date, data_end_date, sim_end_date):
+    """
+    Compare multiple stocks using a single method and averages the performance on the data set. 
+    This function always uses the entire lifetime of the stock data for the simulation.
+    This function also only compares the middle paths of the simulation.
+
+    Args:
+        stock_data_list (list): List of dictionaries containing stock data for each stock.
+
+    Returns:
+        None
+    """
+    stock_simulation_list = simulateManyStocks(tickers, data_start_date, data_end_date, sim_end_date)
+
+    # Create a table for each stock
+    analysis_dict = dict()
+    for method in PARAMETER_FUNCTIONS.keys():
+        analysis_dict[method] = [0,0,0]
+
+    for simulation_data_list in stock_simulation_list:
+        for simulation_data in simulation_data_list:
+            # print(simulation_data)
+            analysis = analyzeAll(simulation_data)
+            meanA = analysis["Mean_Analysis"]
+            medianA = analysis["Median_Analysis"]
+            middleA = analysis["Middle_Analysis"]
+            
+            avgCC = np.mean([meanA[0][1], medianA[0][1],middleA[0][1]])
+            avgMAPE = np.mean([meanA[1][1], medianA[1][1],middleA[1][1]])
+            avgPI = np.mean([meanA[2][1], medianA[2][1],middleA[2][1]])
+
+            analysis_dict[simulation_data["method_name"]][0] += avgCC
+            analysis_dict[simulation_data["method_name"]][1] += avgMAPE
+            analysis_dict[simulation_data["method_name"]][2] += avgPI
+
+
+    for method in PARAMETER_FUNCTIONS.keys():
+        analysis_dict[method][0] /= len(stock_simulation_list)
+        analysis_dict[method][1] /= len(stock_simulation_list)
+        analysis_dict[method][2] /= len(stock_simulation_list)
+    
+    myData = []
+    for method in PARAMETER_FUNCTIONS.keys():
+        myData.append([method, "Multiple Stocks", analysis_dict[method][0], analysis_dict[method][1], analysis_dict[method][2]])
+    
+    head = ["Method Name", "Analysis Group", "Correlation Coefficient", "MAPE", "Percentage Inliers"]
+    table = tabulate(myData, headers=head, tablefmt="grid")
+
+    print("\nAnalysis For Multiple Stocks With Tickers:", tickers)
+    print(table)
+
         
 def createTable(simulation_data_list, compact = False):
     """
