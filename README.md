@@ -1,9 +1,10 @@
 # Brownian-Motion-Stock-Model
 
-This is a project for Math 552
+This is a project for Math 552 At The University Of Massachusetts Amherst
 
-Please be sure to view the following presentation and mathematical report describing this project and the theory behind it
-`Simulating Stock Prices Presentation.pdf`
+Please be sure to view the following presentation and mathematical report describing this project and the theory behind it:
+
+`Simulating Stock Prices Presentation.pdf`,
 `Simulating Stock Prices Mathematical Report.pdf`
 
 Instructions For Running The Code:
@@ -13,13 +14,13 @@ Instructions For Running The Code:
 2. Clone The Repository
   - Open an Empty Directory
   - Navigate to that directory in your terminal
-  - Inside Terminal From /'your_empty_directory':
-    - git clone 'this github url'
+  - Inside Terminal From `/'your_empty_directory'`:
+    - `git clone 'this github url'`
     - `cd Brownian-Motion-Stock-Model`
 
 3.  Install Dependencies
 
-  - Inside Terminal From /Brownian-Motion-Stock-Model:
+  - Inside Terminal From `/Brownian-Motion-Stock-Model`:
     - `pip install -r requirements.txt`
 
 4. Change Any Code In Main
@@ -28,5 +29,5 @@ Instructions For Running The Code:
 
 5. Run The Code
 
-  - Inside Terminal From /Brownian-Motion-Stock-Model:
+  - Inside Terminal From `/Brownian-Motion-Stock-Model`:
     - `python src/main.py`
