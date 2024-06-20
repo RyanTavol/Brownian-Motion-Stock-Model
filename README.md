@@ -4,8 +4,8 @@ This is a project for Math 552 At The University Of Massachusetts Amherst
 
 Please be sure to view the following presentation and mathematical report describing this project and the theory behind it:
 
-`Simulating Stock Prices Presentation.pdf`,
-`Simulating Stock Prices Mathematical Report.pdf`
+`Presentation.pdf`,
+`Mathematical Report.pdf`
 
 Instructions For Running The Code:
 
