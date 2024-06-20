@@ -5,7 +5,7 @@ This is a project for Math 552 At The University Of Massachusetts Amherst
 Please be sure to view the following presentation and mathematical report describing this project and the theory behind it:
 
 `Presentation.pdf`,
-`Mathematical Report.pdf`
+`Report.pdf`
 
 Instructions For Running The Code:
 
